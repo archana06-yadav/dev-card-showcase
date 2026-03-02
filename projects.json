@@ -84,6 +84,27 @@
         }
     },
     {
+        "title": "Micro-Internship Collaboration Platform",
+        "description": "A platform connecting students with startups for short, skill-specific project sprints (1–3 weeks). Startups get focused execution support, and students build portfolio-ready experience through verified project outcomes.",
+        "tags": [
+            "HTML",
+            "CSS",
+            "JavaScript",
+            "EdTech",
+            "Startup",
+            "Collaboration",
+            "Portfolio",
+            "Skill Matching"
+        ],
+        "links": {
+            "live": "./micro-internship-collaboration-platform/"
+        },
+        "author": {
+            "name": "Ayaanshaikh12243",
+            "github": "https://github.com/Ayaanshaikh12243"
+        }
+    },
+    {
         "title": "Positivity Passport",
         "description": "Positivity Passport gives users a virtual passport that fills with stamps as they complete kindness missions in categories like helping, sharing, listening, gratitude, and community. Users can view their journey timeline, unlock global badges, and share passport progress with friends.",
         "tags": [
