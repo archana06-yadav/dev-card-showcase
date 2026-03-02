@@ -577,6 +577,18 @@
     }
   },
   {
+  "title": "One Resource Survival Game – Strategic Scarcity Simulator",
+  "description": "A minimalist survival strategy game where players must survive using only one primary resource. Every decision consumes or preserves that single resource while random events, upgrades, and risk-based choices influence survival time. Features include dynamic event generation, resource decay system, strategic upgrade paths, risk-reward decisions, survival streak tracking, and a bold immersive UI. Built using HTML, CSS, and JavaScript for a tense and engaging resource-management experience.",
+  "tags": ["HTML", "CSS", "JavaScript"],
+  "links": {
+    "live": "./projects/one-resource-survival-game/"
+  },
+  "author": {
+    "name": "Anvesha",
+    "github": "https://github.com/your-github-username"
+  }
+},
+  {
     "title": "Thought Processing Speed Monitor",
     "description": "Measure and track your cognitive processing speed through targeted mental exercises and reaction time tests. Monitor mental clarity, decision-making speed, focus duration, and cognitive fatigue to optimize brain performance and identify areas for improvement.",
     "tags": [
