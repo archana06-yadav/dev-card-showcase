@@ -193,6 +193,30 @@
     "github": "https://github.com/your-github-username"
   }
 },
+{
+  "title": "Tiny Dopamine Detox Tracker",
+  "description": "A minimal yet powerful Dopamine Detox Tracker designed to help users monitor and control high-stimulation habits like social media, gaming, and binge-watching. Features include customizable daily limits, real-time clarity status (Focused, Balanced, Overstimulated), streak tracking, reflection journaling, interactive progress indicators, and persistent local storage. Built with a clean and modern UI using HTML, CSS, and JavaScript.",
+  "tags": ["HTML", "CSS", "JavaScript"],
+  "links": {
+    "live": "./projects/dopamine-detox-tracker/"
+  },
+  "author": {
+    "name": "Anvesha",
+    "github": "https://github.com/your-github-username"
+  }
+},
+{
+  "title": "Text Readability Checker Neon",
+  "description": "A modern, neon-themed Text Readability Checker with a side-by-side dashboard layout. Features live analysis of words, sentences, average word length, average sentence length, Flesch Reading Ease, Flesch-Kincaid Grade, Gunning Fog Index, and SMOG Index. Includes copy and download actions, fully responsive and interactive, built with HTML, CSS, and JavaScript.",
+  "tags": ["HTML", "CSS", "JavaScript"],
+  "links": {
+    "live": "./projects/text-readability-check/"
+  },
+  "author": {
+    "name": "Anvesha",
+    "github": "https://github.com/your-github-username"
+  }
+},
   {
     "title": "Emoji Quiz / Picker",
     "description": "A fun and interactive Emoji Quiz / Picker where users guess the meaning of emojis or pick the correct answer. Features randomized emoji sets, score tracking, animated feedback for correct and wrong answers, playful gradient UI, and responsive design. Built entirely with HTML, CSS, and JavaScript for a portfolio-worthy, engaging experience.",
@@ -304,6 +328,18 @@
       "github": "https://github.com/your-github-username"
     }
   },
+{
+  "title": "Mini Bluff Game – AI Mind Duel",
+  "description": "A psychological decision-based game where players challenge an AI that may be telling the truth or bluffing. Features AI personality modes (Honest, Random, Deceptive), a dynamic suspicion orb, risk-reward scoring system, trust meter, bluff statistics tracking, adaptive difficulty, and a futuristic glassmorphism UI. Built using HTML, CSS, and JavaScript for an immersive strategy experience.",
+  "tags": ["HTML", "CSS", "JavaScript"],
+  "links": {
+    "live": "./projects/mini-bluff/"
+  },
+  "author": {
+    "name": "Anvesha",
+    "github": "https://github.com/your-github-username"
+  }
+},
   {
     "title": "EMI Calculator Pro",
     "description": "A modern and interactive EMI (Equated Monthly Installment) calculator built with a premium fintech-style UI. The application calculates monthly EMI, total interest, and total payment using standard financial formulas. It features dynamic result updates, a doughnut chart visualization for principal vs interest breakdown, responsive design, and a clean neumorphism-based interface for an enhanced user experience.",
@@ -396,6 +432,18 @@
     }
   },
   {
+  "title": "Micro Life ROI Calculator – Time & Habit Impact Analyzer",
+  "description": "A modern interactive calculator that helps users measure the return on investment (ROI) of their daily habits, time usage, and productivity choices. Users can input activities, time spent, energy levels, financial cost, and long-term goals to calculate personal growth ROI. Features include dynamic metric analysis, visual breakdown charts, productivity scoring, habit comparison, and a clean data-driven UI. Built using HTML, CSS, and JavaScript for insightful life optimization tracking.",
+  "tags": ["HTML", "CSS", "JavaScript"],
+  "links": {
+    "live": "./projects/micro-life-roi-calculator/"
+  },
+  "author": {
+    "name": "Anvesha",
+    "github": "https://github.com/your-github-username"
+  }
+},
+  {
     "title": "Nutritional Bioavailability Analyzer",
     "description": "Analyze how well nutrients are absorbed from your meals. Optimize food combinations, preparation methods, and timing for maximum nutritional benefit. Features food database, bioavailability calculations, nutrient interactions, and personalized recommendations for better nutrient absorption.",
     "tags": [
@@ -435,6 +483,18 @@
       "github": "https://github.com/your-github-username"
     }
   },
+{
+  "title": "Constraint Coding Game – Think Within Limits",
+  "description": "An interactive logic-based coding challenge game where players must solve mini programming tasks under strict constraints. Each level imposes unique rules such as limited lines of code, restricted keywords, banned operators, time pressure, or memory limits. Features include dynamic constraint generation, real-time validation feedback, scoring system, level progression, and a modern developer-themed UI. Built using HTML, CSS, and JavaScript for an engaging problem-solving experience.",
+  "tags": ["HTML", "CSS", "JavaScript"],
+  "links": {
+    "live": "./projects/constraint-coding-game/"
+  },
+  "author": {
+    "name": "Anvesha",
+    "github": "https://github.com/your-github-username"
+  }
+},
   {
     "title": "Heavy Metal Exposure Monitoring Log",
     "description": "Track and monitor potential exposure to toxic heavy metals like lead, mercury, arsenic, and cadmium. Log exposure incidents, symptoms, risk levels, and mitigation strategies. Includes educational information about heavy metals and prevention tips for maintaining optimal health.",
@@ -515,6 +575,18 @@
       "github": "https://github.com/your-github-username"
     }
   },
+{
+  "title": "Memory Distortion Game – Recall Under Illusion",
+  "description": "An interactive cognitive challenge where players must remember patterns, numbers, or words that subtly change over time. The game introduces visual distortions, shuffled elements, color shifts, and delayed modifications to test true memory accuracy. Features include progressive difficulty levels, timed recall rounds, distortion effects, accuracy tracking, combo scoring, and a unique illusion-themed UI. Built using HTML, CSS, and JavaScript for a modern brain-training experience.",
+  "tags": ["HTML", "CSS", "JavaScript"],
+  "links": {
+    "live": "./projects/memory-distortion-game/"
+  },
+  "author": {
+    "name": "Anvesha",
+    "github": "https://github.com/your-github-username"
+  }
+},
   {
     "title": "Cognitive Load Buffer Score",
     "description": "Monitor and optimize your cognitive capacity by tracking mental workload, buffer capacity, and cognitive performance. Assess task complexity, mental fatigue, focus quality, and recovery strategies to maintain optimal cognitive function and prevent mental overload.",
@@ -542,6 +614,18 @@
       "github": "https://github.com/Gupta-02"
     }
   },
+  {
+  "title": "One Resource Survival Game – Strategic Scarcity Simulator",
+  "description": "A minimalist survival strategy game where players must survive using only one primary resource. Every decision consumes or preserves that single resource while random events, upgrades, and risk-based choices influence survival time. Features include dynamic event generation, resource decay system, strategic upgrade paths, risk-reward decisions, survival streak tracking, and a bold immersive UI. Built using HTML, CSS, and JavaScript for a tense and engaging resource-management experience.",
+  "tags": ["HTML", "CSS", "JavaScript"],
+  "links": {
+    "live": "./projects/one-resource-survival-game/"
+  },
+  "author": {
+    "name": "Anvesha",
+    "github": "https://github.com/your-github-username"
+  }
+},
   {
     "title": "Thought Processing Speed Monitor",
     "description": "Measure and track your cognitive processing speed through targeted mental exercises and reaction time tests. Monitor mental clarity, decision-making speed, focus duration, and cognitive fatigue to optimize brain performance and identify areas for improvement.",
@@ -9356,6 +9440,18 @@
       "github": "https://github.com/your-github-username"
     }
   },
+{
+  "title": "Time Pressure Logic – Adaptive Rule Challenge",
+  "description": "A fast-paced logic game where players must quickly adapt to dynamically changing rules under extreme time pressure. Features include random rule switching, NOT mode reversals, combo multipliers, shrinking timer bar, adaptive difficulty scaling, glitch effects, and real-time score tracking. Designed with a futuristic neon UI using HTML, CSS, and JavaScript for an intense reflex + reasoning experience.",
+  "tags": ["HTML", "CSS", "JavaScript"],
+  "links": {
+    "live": "./projects/time-pressure-logic/"
+  },
+  "author": {
+    "name": "Anvesha",
+    "github": "https://github.com/your-github-username"
+  }
+},
   {
     "title": "Terminal Motherlode Project",
     "description": "A web-based terminal emulator that mimics a command-line interface, allowing users to execute basic commands and navigate through a simulated file system.",
