@@ -5471,6 +5471,27 @@
         }
     },
     {
+        "title": "Reality Remix Camera",
+        "description": "A live camera app that remixes real-world scenes into alternate universes (Cyberpunk City, Ancient Empire, Underwater World) with interactive hotspots, mini-quests, and instant clip export/share.",
+        "tags": [
+            "HTML",
+            "CSS",
+            "JavaScript",
+            "Camera",
+            "AR-inspired",
+            "Creative Tool",
+            "Storytelling",
+            "Video Export"
+        ],
+        "links": {
+            "live": "./reality-remix-camera/"
+        },
+        "author": {
+            "name": "Ayaanshaikh12243",
+            "github": "https://github.com/Ayaanshaikh12243"
+        }
+    },
+    {
         "title": "Positivity Passport",
         "description": "Positivity Passport gives users a virtual passport that fills with stamps as they complete kindness missions in categories like helping, sharing, listening, gratitude, and community. Users can view their journey timeline, unlock global badges, and share passport progress with friends.",
         "tags": [
