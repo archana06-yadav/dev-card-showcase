@@ -5450,6 +5450,27 @@
         }
     },
     {
+        "title": "Kindness Storybook",
+        "description": "Kindness Storybook is a collaborative platform where users write and illustrate stories about acts of kindness. Each story can be continued by others, creating a living book of positive experiences. The app includes story highlights, contributor badges, and a completed gallery to inspire the community.",
+        "tags": [
+            "HTML",
+            "CSS",
+            "JavaScript",
+            "Social Impact",
+            "Community",
+            "Storytelling",
+            "Kindness",
+            "Collaboration"
+        ],
+        "links": {
+            "live": "./kindness-storybook/"
+        },
+        "author": {
+            "name": "Ayaanshaikh12243",
+            "github": "https://github.com/Ayaanshaikh12243"
+        }
+    },
+    {
         "title": "Positivity Passport",
         "description": "Positivity Passport gives users a virtual passport that fills with stamps as they complete kindness missions in categories like helping, sharing, listening, gratitude, and community. Users can view their journey timeline, unlock global badges, and share passport progress with friends.",
         "tags": [
