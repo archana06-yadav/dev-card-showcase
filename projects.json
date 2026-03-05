@@ -14579,6 +14579,24 @@
       "name": "Tanmayi",
       "github": "https://github.com/Tanmayi30"
     }
+  },
+  {
+    "title": "Kinetic Cut",
+    "description": "An interactive web-based simulator demonstrating realistic rope physics, gravity, and momentum.",
+    "tags": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "Physics",
+      "Gravity"
+    ],
+    "links": {
+      "live": "./kinetic-cut/index.html"
+    },
+    "author": {
+      "name": "Tanmayi",
+      "github": "https://github.com/Tanmayi30"
+    }  
   }
 ]
    
