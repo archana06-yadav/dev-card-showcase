@@ -14527,6 +14527,22 @@
       "name": "Gupta-02",
       "github": "https://github.com/Gupta-02"
     }
+  },
+  {
+    "title": "Bit Buddy",
+    "description": "An interactive web-based simulator demonstrating state machine that track digital character.",
+    "tags": [
+      "HTML",
+      "CSS",
+      "JavaScript"
+    ],
+    "links": {
+      "live": "./bit-buddy/index.html"
+    },
+    "author": {
+      "name": "Tanmayi",
+      "github": "https://github.com/Tanmayi30"
+    }
   }
 ]
    
