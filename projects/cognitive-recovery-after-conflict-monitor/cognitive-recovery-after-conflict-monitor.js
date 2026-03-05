@@ -1,11 +1,90 @@
 // cognitive-recovery-after-conflict-monitor.js
 
+document.addEventListener('DOMContentLoaded', function() {
+    const primaryFavicon = document.getElementById('primary-favicon');
+    
+    if (primaryFavicon) {
+        const img = new Image();
+        img.onload = function() {
+            console.log('Primary favicon loaded successfully');
+        };
+        img.onerror = function() {
+            console.log('Primary favicon failed to load, trying fallbacks...');
+            tryFallbackFavicons();
+        };
+        img.src = primaryFavicon.href;
+    }
+});
+
+function tryFallbackFavicons() {
+    const fallbacks = [
+        document.getElementById('fallback-favicon-ico'),
+        document.getElementById('fallback-favicon-png'),
+        document.getElementById('emergency-favicon')
+    ];
+    
+    let fallbackIndex = 0;
+    
+    function tryNextFallback() {
+        if (fallbackIndex >= fallbacks.length) {
+            console.log('All favicons failed, using emoji fallback');
+            createEmojiFavicon();
+            return;
+        }
+        
+        const fallback = fallbacks[fallbackIndex];
+        if (!fallback) {
+            fallbackIndex++;
+            tryNextFallback();
+            return;
+        }
+        
+        const img = new Image();
+        img.onload = function() {
+            console.log(`Fallback favicon ${fallbackIndex + 1} loaded`);
+            // Remove all existing favicons and add the working one
+            removeAllFavicons();
+            document.head.appendChild(fallback.cloneNode());
+        };
+        img.onerror = function() {
+            console.log(`Fallback ${fallbackIndex + 1} failed`);
+            fallbackIndex++;
+            tryNextFallback();
+        };
+        img.src = fallback.href;
+    }
+    
+    tryNextFallback();
+}
+
+function removeAllFavicons() {
+    const favicons = document.querySelectorAll('link[rel="icon"], link[rel="apple-touch-icon"]');
+    favicons.forEach(favicon => favicon.remove());
+}
+
+function createEmojiFavicon() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 32;
+    canvas.height = 32;
+    const ctx = canvas.getContext('2d');
+    ctx.font = '24px Arial';
+    ctx.fillStyle = '#4CAF50';
+    ctx.fillText('🧠', 4, 24);
+    
+    const link = document.createElement('link');
+    link.rel = 'icon';
+    link.type = 'image/png';
+    link.href = canvas.toDataURL('image/png');
+    document.head.appendChild(link);
+}
+
 let baselineResults = JSON.parse(localStorage.getItem('cognitiveBaseline')) || null;
 let recoveryResults = JSON.parse(localStorage.getItem('cognitiveRecoveryResults')) || [];
 let currentTest = null;
 let reactionStartTime = null;
 let testStep = 0;
 let testResults = {};
+let recoveryChartInstance = null;
 
 function startBaselineTest() {
     currentTest = { type: 'baseline' };
@@ -21,16 +100,41 @@ function startConflictTest() {
 function startTest() {
     testStep = 0;
     testResults = {};
-    document.getElementById('baselineSection').style.display = 'none';
-    document.getElementById('conflictSection').style.display = 'none';
+    
+    const progressBar = document.getElementById('testProgress');
+    if (progressBar) {
+        progressBar.style.width = '0%';
+    }
+    
     document.getElementById('testSection').style.display = 'block';
     document.getElementById('resultsSection').style.display = 'none';
+
+    resetTestUI();
     nextTestStep();
+}
+
+function resetTestUI() {
+    const reactionBtn = document.getElementById('reactionBtn');
+    if (reactionBtn) {
+        reactionBtn.textContent = 'Wait...';
+        reactionBtn.className = 'reaction-btn waiting';
+        reactionBtn.disabled = true;
+    }
+    
+    document.getElementById('memoryTest').style.display = 'none';
+    document.getElementById('memoryInput').style.display = 'none';
+    document.getElementById('memoryAnswer').value = '';
+    document.getElementById('testStatus').textContent = 'Test in progress...';
+    
+    reactionStartTime = null;
 }
 
 function nextTestStep() {
     testStep++;
-    document.getElementById('testProgress').style.width = `${(testStep / 3) * 100}%`;
+    const progressBar = document.getElementById('testProgress');
+    if (progressBar) {
+        progressBar.style.width = `${(testStep / 3) * 100}%`;
+    }
 
     if (testStep === 1) {
         startReactionTest();
@@ -83,9 +187,20 @@ function startMemoryTest() {
     }, 5000); // Show for 5 seconds
 }
 
+function showMemoryInput() {
+}
+
 function checkMemory() {
-    const answer = document.getElementById('memoryAnswer').value;
+    const answer = document.getElementById('memoryAnswer').value.trim();
     const correct = testResults.correctNumbers;
+    
+    const isValid = /^\d{5}$/.test(answer);
+    
+    if (!isValid) {
+        alert('Please enter exactly 5 digits (0-9 only)');
+        return; 
+    }
+    
     let score = 0;
     for (let i = 0; i < correct.length; i++) {
         if (answer[i] === correct[i]) score++;
@@ -104,7 +219,7 @@ function showResults() {
     document.getElementById('memoryScoreResult').textContent = `${testResults.memoryScore}/5 (${memoryPercentage.toFixed(0)}%)`;
 
     let recoveryStatus = 'N/A';
-    if (baselineResults) {
+    if (baselineResults && currentTest && currentTest.type === 'post-conflict') {
         const reactionDiff = testResults.reactionTime - baselineResults.reactionTime;
         const memoryDiff = testResults.memoryScore - baselineResults.memoryScore;
 
@@ -125,6 +240,7 @@ function saveResult() {
     if (currentTest.type === 'baseline') {
         baselineResults = testResults;
         localStorage.setItem('cognitiveBaseline', JSON.stringify(baselineResults));
+        alert('Baseline results saved successfully!');
     } else if (currentTest.type === 'post-conflict') {
         const result = {
             ...currentTest,
@@ -135,17 +251,29 @@ function saveResult() {
         recoveryResults.push(result);
         localStorage.setItem('cognitiveRecoveryResults', JSON.stringify(recoveryResults));
         updateHistory();
-        updateChart();
+        updateChart(); // This will now properly handle chart updates
+        alert('Post-conflict results saved successfully!');
     }
 
     document.getElementById('resultsSection').style.display = 'none';
-    document.getElementById('baselineSection').style.display = 'block';
-    document.getElementById('conflictSection').style.display = 'block';
+    document.getElementById('testSection').style.display = 'none';
+    
+    const progressBar = document.getElementById('testProgress');
+    if (progressBar) {
+        progressBar.style.width = '0%';
+    }
+    
+    testStep = 0;
 }
 
 function updateHistory() {
     const historyDiv = document.getElementById('recoveryHistory');
     historyDiv.innerHTML = '';
+
+    if (recoveryResults.length === 0) {
+        historyDiv.innerHTML = '<p>No recovery data yet. Take a post-conflict test to see history.</p>';
+        return;
+    }
 
     recoveryResults.slice(-5).reverse().forEach(result => {
         const item = document.createElement('div');
@@ -161,14 +289,27 @@ function updateHistory() {
 }
 
 function updateChart() {
-    const ctx = document.getElementById('recoveryChart').getContext('2d');
+    const canvas = document.getElementById('recoveryChart');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+
+    if (recoveryChartInstance instanceof Chart) {
+        recoveryChartInstance.destroy();
+        recoveryChartInstance = null;
+    }
+
+    if (!recoveryResults || recoveryResults.length === 0) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        return;
+    }
 
     const data = recoveryResults.map(result => ({
         x: new Date(result.timestamp),
         y: result.reactionTime
     }));
 
-    new Chart(ctx, {
+    recoveryChartInstance = new Chart(ctx, {
         type: 'line',
         data: {
             datasets: [{
@@ -176,19 +317,39 @@ function updateChart() {
                 data: data,
                 borderColor: '#4fd1ff',
                 backgroundColor: 'rgba(79, 209, 255, 0.1)',
-                fill: true
+                fill: true,
+                tension: 0.4
             }]
         },
         options: {
+            responsive: true,
+            maintainAspectRatio: false,
             scales: {
                 x: {
                     type: 'time',
                     time: {
-                        unit: 'day'
+                        unit: 'day',
+                        displayFormats: {
+                            day: 'MMM D'
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Date'
                     }
                 },
                 y: {
-                    beginAtZero: false
+                    beginAtZero: false,
+                    title: {
+                        display: true,
+                        text: 'Reaction Time (ms)'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
                 }
             }
         }
@@ -204,4 +365,16 @@ document.getElementById('conflictIntensity').addEventListener('input', function(
 document.addEventListener('DOMContentLoaded', function() {
     updateHistory();
     updateChart();
+    
+    const progressBar = document.getElementById('testProgress');
+    if (progressBar) {
+        progressBar.style.width = '0%';
+    }
+});
+
+window.addEventListener('beforeunload', function() {
+    if (recoveryChartInstance instanceof Chart) {
+        recoveryChartInstance.destroy();
+        recoveryChartInstance = null;
+    }
 });
