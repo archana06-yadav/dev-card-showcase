@@ -11251,6 +11251,18 @@
     }
   },
   {
+  "title": "Rule Switcher – Dynamic Logic Puzzle",
+  "description": "A fast-paced logic puzzle where the rules of the game keep changing while you play. Players must adapt quickly as scoring rules, movement patterns, or constraints dynamically switch after each round. The game challenges pattern recognition, adaptability, and decision-making under shifting conditions. Features include random rule switching, score tracking, visual rule indicators, adaptive difficulty, and a clean responsive UI. Built using HTML, CSS, and JavaScript for a unique brain-training puzzle experience.",
+  "tags": ["HTML", "CSS", "JavaScript"],
+  "links": {
+    "live": "./projects/rule-switcher/"
+  },
+  "author": {
+    "name": "Anvesha",
+    "github": "https://github.com/your-github-username"
+  }
+},
+  {
     "title": "Breathing Exercise UI 🫁",
     "description": "An interactive guided breathing exercise application with multiple techniques including 4-7-8 breathing, box breathing, and deep breathing. Features animated breath cycles, voice guidance, customizable patterns, session tracking, and relaxation tips for stress relief and mindfulness practice.",
     "tags": [
