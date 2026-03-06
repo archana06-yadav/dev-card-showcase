@@ -12,6 +12,18 @@
   }
 },
 {
+  "title": "Mission Control – 1 Minute Puzzle Solver",
+  "description": "A fast-paced puzzle challenge where players act as a mission control operator solving rapid puzzles within 60 seconds. Featuring a futuristic dashboard UI, multiple puzzle types including math, word scramble, and pattern puzzles, the game tests speed, focus, and problem-solving under pressure.",
+  "tags": ["HTML", "CSS", "JavaScript", "Game", "Puzzle", "Interactive", "Timer"],
+  "links": {
+    "live": "./projects/one-minute-puzzle-solver/"
+  },
+  "author": {
+    "name": "Anvesha",
+    "github": "https://github.com/your-github-username"
+  }
+},
+{
   "title": "TitleForge CLI – Terminal Title Improver",
   "description": "A terminal-style tool that transforms simple titles into powerful headlines. Users type a title into a command-line interface and receive multiple improved headline styles such as viral, guide, and YouTube titles. Designed with a hacker-themed terminal UI for a unique and interactive experience.",
   "tags": ["HTML", "CSS", "JavaScript", "Utility", "Productivity", "Terminal UI"],
