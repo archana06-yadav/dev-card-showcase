@@ -115,6 +115,18 @@
     }
   },
   {
+  "title": "Cosmic Constellation – Memory Path Game",
+  "description": "A space-themed memory game where players watch stars light up to form a constellation and must recreate the same star sequence. Featuring a cosmic sky interface, glowing star animations, and progressive difficulty levels, the game transforms memory challenges into an immersive constellation-building experience.",
+  "tags": ["HTML", "CSS", "JavaScript", "Game", "Memory", "Puzzle", "Interactive"],
+  "links": {
+    "live": "./projects/memory-path-game/"
+  },
+  "author": {
+    "name": "Anvesha",
+    "github": "https://github.com/your-github-username"
+  }
+},
+  {
   "title": "Speed Sorting Game – Reflex Sort Arena",
   "description": "A fast-paced arcade-style sorting game where players quickly categorize numbers by selecting them and assigning them to the correct zone under time pressure. Features include combo multiplier system, dynamic score calculation, click-to-sort gameplay (no drag-and-drop), timer-based challenge, mistake detection with visual feedback, and a competitive reflex-focused arena UI. Built using HTML, CSS, and JavaScript for an engaging speed and accuracy challenge.",
   "tags": ["HTML", "CSS", "JavaScript", "Game", "Sorting", "Arcade UI", "Interactive"],
