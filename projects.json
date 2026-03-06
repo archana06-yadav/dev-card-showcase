@@ -14732,6 +14732,24 @@
       "name": "Tanmayi",
       "github": "https://github.com/Tanmayi30"
     }  
+  },
+  {
+    "title": "Ricochet Vector",
+    "description": "Players calculate trajectories and power to launch an orb through complex geometric arenas.",
+    "tags": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "Physics",
+      "Vector"
+    ],
+    "links": {
+      "live": "./rico-chet/index.html"
+    },
+    "author": {
+      "name": "Tanmayi",
+      "github": "https://github.com/Tanmayi30"
+    }
   }
 ]
    
