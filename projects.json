@@ -24,6 +24,18 @@
   }
 },
 {
+  "title": "ComplexityScope – Code Complexity Estimator",
+  "description": "A developer-focused tool that analyzes code snippets and estimates their logical complexity using visual metrics. The tool detects loops, conditions, functions, and nesting depth, then displays a complexity score through an animated meter and interactive dashboard cards.",
+  "tags": ["HTML", "CSS", "JavaScript", "Developer Tool", "Code Analysis", "Interactive"],
+  "links": {
+    "live": "./projects/code-complexity-estimator/"
+  },
+  "author": {
+    "name": "Anvesha",
+    "github": "https://github.com/your-github-username"
+  }
+},
+{
   "title": "ReverseMind – Opposite Thinking Game",
   "description": "A fast-paced brain challenge where players must quickly choose the opposite meaning of a given word. Occasionally the game flips the rule with trap rounds where players must select the same word instead, testing reaction speed and cognitive flexibility. Features animated word cards, score tracking, and timed rounds.",
   "tags": ["HTML", "CSS", "JavaScript", "Game", "Brain", "Puzzle", "Interactive"],
