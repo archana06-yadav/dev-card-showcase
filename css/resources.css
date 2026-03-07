@@ -642,6 +642,43 @@ body {
 
 .cta-actions { display: flex; gap: 10px; flex-wrap: wrap; }
 
+/* Smooth Scroll */
+/* Default = Light mode */
+:root {
+    --scrollbar-track: #f5f7fb;
+    --scrollbar-thumb: linear-gradient(135deg, #6366f1 0%, #60a5fa 100%);
+    --scrollbar-thumb-hover: #0ea5e9;
+}
+
+/* Dark mode override */
+:root:has(body[data-theme="dark"]) {
+    --scrollbar-track: #121c31;
+    --scrollbar-thumb: linear-gradient(135deg, #6366f1 0%, #60a5fa 100%);
+    --scrollbar-thumb-hover: #60a5fa;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+html::-webkit-scrollbar {
+    width: 10px;
+}
+
+html::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+    border-radius: 5px;
+}
+
+html::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 5px;
+}
+
+html::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
+}
+
 .footer {
     margin-top: 38px;
     background: var(--bg-secondary);
