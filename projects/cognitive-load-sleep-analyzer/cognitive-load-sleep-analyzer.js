@@ -3,7 +3,11 @@
 let entries = JSON.parse(localStorage.getItem('cognitiveLoadSleepEntries')) || [];
 let sleepGoal = parseFloat(localStorage.getItem('sleepGoal')) || 8.0;
 let chartInstance = null;
+let riskHistoryChart = null;
 let currentChartType = 'line';
+
+// Burnout risk history
+let riskHistory = JSON.parse(localStorage.getItem('burnoutRiskHistory')) || [];
 
 // Notification settings
 let notificationSettings = JSON.parse(localStorage.getItem('notificationSettings')) || {
@@ -58,6 +62,8 @@ document.addEventListener('DOMContentLoaded', function() {
     updateSleepDebtCalculator();
     renderHeatMap();
     renderCorrelationMatrix();
+    calculateBurnoutRisk(); // New function
+    renderRiskHistoryChart(); // New function
     
     initializeCharacterCounters();
     initializeFilters();
@@ -1892,6 +1898,8 @@ function deleteEntry(id) {
         updateSleepDebtCalculator();
         renderHeatMap();
         renderCorrelationMatrix();
+        calculateBurnoutRisk(); // Update burnout risk
+        renderRiskHistoryChart(); // Update risk history
     }
 }
 
@@ -2001,6 +2009,8 @@ function logEntry() {
     updateSleepDebtCalculator();
     renderHeatMap();
     renderCorrelationMatrix();
+    calculateBurnoutRisk(); // Calculate burnout risk for new entry
+    renderRiskHistoryChart(); // Update risk history
     
     // Check for burnout risk after new entry is added
     setTimeout(() => {
@@ -2070,6 +2080,7 @@ function updateSleepGoal() {
     }, 500);
     
     updateSleepDebtCalculator();
+    calculateBurnoutRisk(); // Recalculate burnout risk when sleep goal changes
 }
 
 function calculateSleepDebt() {
@@ -2235,6 +2246,426 @@ function updateDebtHistory(dailyDebts) {
             </div>
         `;
     }).join('');
+}
+
+// ============== NEW BURNOUT RISK FUNCTIONS ==============
+
+// Calculate burnout risk score
+function calculateBurnoutRisk() {
+    if (entries.length < 3) {
+        displayNoDataBurnoutRisk();
+        return;
+    }
+    
+    // Sort entries by date
+    const sortedEntries = [...entries].sort((a, b) => new Date(a.date) - new Date(b.date));
+    const recentEntries = sortedEntries.slice(-14); // Last 14 days for analysis
+    
+    // Calculate risk factors
+    const consecutiveHighLoadScore = calculateConsecutiveHighLoadRisk(recentEntries);
+    const sleepDebtScore = calculateSleepDebtRisk();
+    const sleepDeclineScore = calculateSleepDeclineRisk(recentEntries);
+    
+    // Weighted total score (0-100)
+    const totalRiskScore = Math.min(100, Math.round(
+        (consecutiveHighLoadScore * 0.4) + 
+        (sleepDebtScore * 0.35) + 
+        (sleepDeclineScore * 0.25)
+    ));
+    
+    // Update UI
+    updateBurnoutRiskUI(totalRiskScore, {
+        consecutive: consecutiveHighLoadScore,
+        sleepDebt: sleepDebtScore,
+        sleepDecline: sleepDeclineScore
+    });
+    
+    // Save to history
+    saveRiskToHistory(totalRiskScore);
+    
+    return totalRiskScore;
+}
+
+// Calculate risk from consecutive high-load days
+function calculateConsecutiveHighLoadRisk(entries) {
+    if (entries.length === 0) return 0;
+    
+    let maxConsecutive = 0;
+    let currentStreak = 0;
+    
+    entries.forEach(entry => {
+        if (entry.cognitiveLoad >= 7) { // High load threshold
+            currentStreak++;
+            maxConsecutive = Math.max(maxConsecutive, currentStreak);
+        } else {
+            currentStreak = 0;
+        }
+    });
+    
+    // Convert to risk score (0-100)
+    if (maxConsecutive === 0) return 0;
+    if (maxConsecutive === 1) return 20;
+    if (maxConsecutive === 2) return 40;
+    if (maxConsecutive === 3) return 60;
+    if (maxConsecutive === 4) return 80;
+    return 100; // 5+ consecutive days
+}
+
+// Calculate risk from sleep debt
+function calculateSleepDebtRisk() {
+    const debtData = calculateSleepDebt();
+    const totalDebt = debtData.totalDebt;
+    
+    // Convert to risk score (0-100)
+    if (totalDebt >= 0) return 0; // No debt or surplus
+    if (totalDebt > -5) return 25; // Mild debt
+    if (totalDebt > -10) return 50; // Moderate debt
+    if (totalDebt > -15) return 75; // High debt
+    return 100; // Severe debt (>15 hours deficit)
+}
+
+// Calculate risk from declining sleep quality
+function calculateSleepDeclineRisk(entries) {
+    if (entries.length < 7) return 0;
+    
+    // Split into recent and older
+    const recentWeek = entries.slice(-7);
+    const previousWeek = entries.slice(-14, -7);
+    
+    if (previousWeek.length === 0) return 0;
+    
+    const avgRecent = recentWeek.reduce((sum, e) => sum + e.sleepQuality, 0) / recentWeek.length;
+    const avgPrevious = previousWeek.reduce((sum, e) => sum + e.sleepQuality, 0) / previousWeek.length;
+    
+    const declinePercent = ((avgPrevious - avgRecent) / avgPrevious) * 100;
+    
+    // Convert to risk score (0-100)
+    if (declinePercent <= 0) return 0; // No decline or improvement
+    if (declinePercent < 10) return 25; // Mild decline
+    if (declinePercent < 20) return 50; // Moderate decline
+    if (declinePercent < 30) return 75; // High decline
+    return 100; // Severe decline (>30%)
+}
+
+// Update burnout risk UI
+function updateBurnoutRiskUI(totalScore, factors) {
+    // Update risk score
+    const riskScoreEl = document.getElementById('burnoutRiskScore');
+    const riskFillEl = document.getElementById('burnoutRiskFill');
+    const riskStatusEl = document.getElementById('burnoutRiskStatus');
+    
+    if (riskScoreEl) riskScoreEl.textContent = totalScore;
+    if (riskFillEl) riskFillEl.style.width = `${totalScore}%`;
+    
+    // Update risk status and color
+    let status = 'Low Risk';
+    let statusClass = 'low-risk';
+    
+    if (totalScore >= 70) {
+        status = 'High Risk';
+        statusClass = 'high-risk';
+    } else if (totalScore >= 40) {
+        status = 'Moderate Risk';
+        statusClass = 'moderate-risk';
+    }
+    
+    if (riskStatusEl) {
+        riskStatusEl.textContent = status;
+        riskStatusEl.className = `risk-status ${statusClass}`;
+    }
+    
+    // Update factor cards
+    updateFactorCard('consecutive', factors.consecutive);
+    updateFactorCard('sleepDebt', factors.sleepDebt);
+    updateFactorCard('sleepDecline', factors.sleepDecline);
+    
+    // Update recommendations
+    updateRiskRecommendations(totalScore, factors);
+}
+
+// Update individual factor card
+function updateFactorCard(factorType, score) {
+    const card = document.getElementById(`factor${capitalizeFirstLetter(factorType)}`);
+    if (!card) return;
+    
+    const valueEl = document.getElementById(`${factorType}Value`);
+    const progressEl = document.getElementById(`${factorType}Progress`);
+    
+    // Update value display
+    if (valueEl) {
+        if (factorType === 'consecutive') {
+            valueEl.textContent = getConsecutiveDaysText(score);
+        } else if (factorType === 'sleepDebt') {
+            valueEl.textContent = getSleepDebtRiskText(score);
+        } else if (factorType === 'sleepDecline') {
+            valueEl.textContent = `${score}% decline`;
+        }
+    }
+    
+    // Update progress bar
+    if (progressEl) {
+        progressEl.style.width = `${score}%`;
+    }
+    
+    // Update card styling based on risk level
+    card.classList.remove('warning', 'danger');
+    if (score >= 70) {
+        card.classList.add('danger');
+    } else if (score >= 40) {
+        card.classList.add('warning');
+    }
+}
+
+// Helper: Capitalize first letter
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+// Helper: Get text for consecutive days based on score
+function getConsecutiveDaysText(score) {
+    if (score === 0) return '0 days';
+    if (score <= 20) return '1 day';
+    if (score <= 40) return '2 days';
+    if (score <= 60) return '3 days';
+    if (score <= 80) return '4 days';
+    return '5+ days';
+}
+
+// Helper: Get text for sleep debt risk based on score
+function getSleepDebtRiskText(score) {
+    if (score === 0) return 'No debt';
+    if (score <= 25) return 'Mild debt';
+    if (score <= 50) return 'Moderate debt';
+    if (score <= 75) return 'High debt';
+    return 'Severe debt';
+}
+
+// Update risk recommendations
+function updateRiskRecommendations(totalScore, factors) {
+    const recommendationsEl = document.getElementById('riskRecommendations');
+    if (!recommendationsEl) return;
+    
+    let icon = 'fa-smile';
+    let title = 'Low Risk';
+    let message = 'You\'re doing great! Maintain your current habits.';
+    let riskClass = 'low-risk';
+    
+    if (totalScore >= 70) {
+        icon = 'fa-exclamation-triangle';
+        title = 'High Risk';
+        riskClass = 'high-risk';
+        message = generateHighRiskMessage(factors);
+    } else if (totalScore >= 40) {
+        icon = 'fa-exclamation-circle';
+        title = 'Moderate Risk';
+        riskClass = 'moderate-risk';
+        message = generateModerateRiskMessage(factors);
+    }
+    
+    recommendationsEl.innerHTML = `
+        <div class="recommendation-card ${riskClass}">
+            <i class="fas ${icon}"></i>
+            <div class="recommendation-text">
+                <strong>${title}:</strong> ${message}
+            </div>
+        </div>
+    `;
+}
+
+// Generate high risk message based on factors
+function generateHighRiskMessage(factors) {
+    const messages = [];
+    
+    if (factors.consecutive >= 80) {
+        messages.push('You\'ve had multiple consecutive days of high cognitive load.');
+    }
+    if (factors.sleepDebt >= 75) {
+        messages.push('Severe sleep debt is accumulating.');
+    }
+    if (factors.sleepDecline >= 75) {
+        messages.push('Your sleep quality is declining rapidly.');
+    }
+    
+    if (messages.length === 0) {
+        return 'Critical burnout risk detected. Take immediate action to rest and recover.';
+    }
+    
+    return messages.join(' ') + ' Consider taking a day off and prioritizing sleep.';
+}
+
+// Generate moderate risk message based on factors
+function generateModerateRiskMessage(factors) {
+    const messages = [];
+    
+    if (factors.consecutive >= 50) {
+        messages.push('watch your consecutive high-load days');
+    }
+    if (factors.sleepDebt >= 50) {
+        messages.push('pay attention to your sleep debt');
+    }
+    if (factors.sleepDecline >= 50) {
+        messages.push('monitor your declining sleep quality');
+    }
+    
+    if (messages.length === 0) {
+        return 'Early warning signs detected. Make small adjustments to prevent burnout.';
+    }
+    
+    return `Moderate risk detected - ${messages.join(', ')}.`;
+}
+
+// Save risk score to history
+function saveRiskToHistory(score) {
+    const today = new Date().toISOString().split('T')[0];
+    
+    // Check if we already have an entry for today
+    const existingIndex = riskHistory.findIndex(item => item.date === today);
+    
+    if (existingIndex !== -1) {
+        riskHistory[existingIndex].score = score;
+    } else {
+        riskHistory.push({
+            date: today,
+            score: score
+        });
+    }
+    
+    // Keep only last 30 days
+    if (riskHistory.length > 30) {
+        riskHistory = riskHistory.slice(-30);
+    }
+    
+    localStorage.setItem('burnoutRiskHistory', JSON.stringify(riskHistory));
+}
+
+// Render risk history chart
+function renderRiskHistoryChart() {
+    const ctx = document.getElementById('riskHistoryChart');
+    if (!ctx) return;
+    
+    if (riskHistoryChart) {
+        riskHistoryChart.destroy();
+    }
+    
+    if (riskHistory.length === 0) {
+        ctx.style.display = 'none';
+        return;
+    }
+    
+    ctx.style.display = 'block';
+    
+    const sortedHistory = [...riskHistory].sort((a, b) => new Date(a.date) - new Date(b.date));
+    
+    const labels = sortedHistory.map(item => {
+        const date = new Date(item.date);
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    });
+    
+    const scores = sortedHistory.map(item => item.score);
+    
+    // Determine colors based on scores
+    const backgroundColors = scores.map(score => {
+        if (score >= 70) return 'rgba(220, 53, 69, 0.2)';
+        if (score >= 40) return 'rgba(255, 193, 7, 0.2)';
+        return 'rgba(40, 167, 69, 0.2)';
+    });
+    
+    const borderColors = scores.map(score => {
+        if (score >= 70) return '#dc3545';
+        if (score >= 40) return '#ffc107';
+        return '#28a745';
+    });
+    
+    riskHistoryChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Burnout Risk Score',
+                data: scores,
+                backgroundColor: backgroundColors,
+                borderColor: borderColors[borderColors.length - 1] || '#4fd1ff',
+                borderWidth: 2,
+                tension: 0.3,
+                fill: true,
+                pointBackgroundColor: borderColors,
+                pointBorderColor: 'white',
+                pointRadius: 4,
+                pointHoverRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    },
+                    ticks: {
+                        callback: function(value) {
+                            return value + '%';
+                        },
+                        color: 'rgba(255, 255, 255, 0.7)'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        color: 'rgba(255, 255, 255, 0.7)'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `Risk Score: ${context.raw}%`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Display no data state for burnout risk
+function displayNoDataBurnoutRisk() {
+    const riskScoreEl = document.getElementById('burnoutRiskScore');
+    const riskFillEl = document.getElementById('burnoutRiskFill');
+    const riskStatusEl = document.getElementById('burnoutRiskStatus');
+    
+    if (riskScoreEl) riskScoreEl.textContent = '0';
+    if (riskFillEl) riskFillEl.style.width = '0%';
+    if (riskStatusEl) {
+        riskStatusEl.textContent = 'Insufficient Data';
+        riskStatusEl.className = 'risk-status low-risk';
+    }
+    
+    // Update factor cards
+    updateFactorCard('consecutive', 0);
+    updateFactorCard('sleepDebt', 0);
+    updateFactorCard('sleepDecline', 0);
+    
+    // Update recommendations
+    const recommendationsEl = document.getElementById('riskRecommendations');
+    if (recommendationsEl) {
+        recommendationsEl.innerHTML = `
+            <div class="recommendation-card low-risk">
+                <i class="fas fa-info-circle"></i>
+                <div class="recommendation-text">
+                    Log at least 3 days of data to see your burnout risk analysis.
+                </div>
+            </div>
+        `;
+    }
 }
 
 // Export functions to window
