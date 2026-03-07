@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
     updateHistory();
     updateChart();
     updateRecoveryTimeTracking();
+    updateStatisticalAnalysis(); // New function call
     
     const progressBar = document.getElementById('testProgress');
     if (progressBar) {
@@ -35,6 +36,161 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeAriaLiveRegions();
     initializeSessionTimeout();
 });
+
+const StatisticalAnalyzer = {
+    movingAverage(data, windowSize = 3) {
+        if (data.length < windowSize) return data;
+        
+        const result = [];
+        for (let i = 0; i < data.length; i++) {
+            const start = Math.max(0, i - Math.floor(windowSize / 2));
+            const end = Math.min(data.length, i + Math.floor(windowSize / 2) + 1);
+            const window = data.slice(start, end);
+            const avg = window.reduce((sum, val) => sum + val, 0) / window.length;
+            result.push(avg);
+        }
+        return result;
+    },
+
+    calculateTrend(data) {
+        if (data.length < 2) return { direction: 'stable', strength: 0 };
+        
+        const recent = data.slice(-3);
+        const first = recent[0];
+        const last = recent[recent.length - 1];
+        
+        if (recent.length < 2) return { direction: 'stable', strength: 0 };
+        
+        const change = ((last - first) / first) * 100;
+        
+        if (Math.abs(change) < 5) return { direction: 'stable', strength: Math.abs(change) };
+        if (change < 0) return { direction: 'improving', strength: Math.abs(change) };
+        return { direction: 'worsening', strength: change };
+    },
+
+    standardDeviation(data) {
+        if (data.length < 2) return 0;
+        
+        const mean = data.reduce((sum, val) => sum + val, 0) / data.length;
+        const squareDiffs = data.map(val => Math.pow(val - mean, 2));
+        const avgSquareDiff = squareDiffs.reduce((sum, val) => sum + val, 0) / data.length;
+        return Math.sqrt(avgSquareDiff);
+    },
+
+    predictNextRecovery(data) {
+        if (data.length < 3) return null;
+        
+        const indices = data.map((_, i) => i);
+        const n = data.length;
+        
+        const sumX = indices.reduce((a, b) => a + b, 0);
+        const sumY = data.reduce((a, b) => a + b, 0);
+        const sumXY = indices.reduce((sum, x, i) => sum + (x * data[i]), 0);
+        const sumXX = indices.reduce((sum, x) => sum + (x * x), 0);
+        
+        const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+        const intercept = (sumY - slope * sumX) / n;
+        
+        const nextIndex = n;
+        const prediction = slope * nextIndex + intercept;
+        
+        const residuals = data.map((y, i) => Math.abs(y - (slope * i + intercept)));
+        const mae = residuals.reduce((sum, val) => sum + val, 0) / n;
+        
+        return {
+            value: Math.max(0, Math.round(prediction)),
+            lowerBound: Math.max(0, Math.round(prediction - mae)),
+            upperBound: Math.round(prediction + mae),
+            confidence: Math.min(100, Math.round((1 - (mae / (prediction || 1))) * 100))
+        };
+    },
+
+    identifyPatterns(data) {
+        if (data.length < 4) return { type: 'insufficient_data', description: 'Not enough data for pattern analysis' };
+        
+        const recent = data.slice(-4);
+        const variance = this.standardDeviation(recent) / (recent.reduce((a, b) => a + b, 0) / recent.length);
+        
+        const trend = this.calculateTrend(data);
+        
+        if (variance < 0.1) {
+            return { type: 'consistent', description: 'Recovery times are very consistent' };
+        } else if (trend.direction === 'improving' && trend.strength > 10) {
+            return { type: 'improving', description: 'Recovery times are consistently improving' };
+        } else if (trend.direction === 'worsening' && trend.strength > 10) {
+            return { type: 'declining', description: 'Recovery times are getting longer' };
+        } else if (variance > 0.3) {
+            return { type: 'variable', description: 'Recovery times show high variability' };
+        }
+        
+        return { type: 'stable', description: 'Recovery patterns are stable' };
+    },
+
+    percentile(data, percentile) {
+        if (data.length === 0) return 0;
+        const sorted = [...data].sort((a, b) => a - b);
+        const index = (percentile / 100) * (sorted.length - 1);
+        if (Math.floor(index) === index) return sorted[index];
+        
+        const lower = sorted[Math.floor(index)];
+        const upper = sorted[Math.ceil(index)];
+        return lower + (upper - lower) * (index - Math.floor(index));
+    },
+
+    generateInsights(recoveryTimes) {
+        if (!recoveryTimes || recoveryTimes.length === 0) {
+            return { hasData: false };
+        }
+        
+        const times = recoveryTimes.map(rt => rt.recoveryTime);
+        const intensities = recoveryTimes.map(rt => rt.intensity).filter(i => i);
+        
+        const stats = {
+            hasData: true,
+            count: times.length,
+            mean: times.reduce((a, b) => a + b, 0) / times.length,
+            median: this.percentile(times, 50),
+            stdDev: this.standardDeviation(times),
+            min: Math.min(...times),
+            max: Math.max(...times),
+            q1: this.percentile(times, 25),
+            q3: this.percentile(times, 75),
+            trend: this.calculateTrend(times),
+            pattern: this.identifyPatterns(times),
+            prediction: this.predictNextRecovery(times)
+        };
+        
+        if (intensities.length >= 3 && intensities.length === times.length) {
+            const correlation = this.calculateCorrelation(intensities, times);
+            stats.intensityCorrelation = correlation;
+        }
+        
+        return stats;
+    },
+
+    calculateCorrelation(x, y) {
+        const n = x.length;
+        const sumX = x.reduce((a, b) => a + b, 0);
+        const sumY = y.reduce((a, b) => a + b, 0);
+        const sumXY = x.reduce((sum, xi, i) => sum + (xi * y[i]), 0);
+        const sumXX = x.reduce((sum, xi) => sum + (xi * xi), 0);
+        const sumYY = y.reduce((sum, yi) => sum + (yi * yi), 0);
+        
+        const correlation = (n * sumXY - sumX * sumY) / 
+            Math.sqrt((n * sumXX - sumX * sumX) * (n * sumYY - sumY * sumY));
+        
+        return correlation;
+    },
+
+    getRecoveryCategory(recoveryTime, stats) {
+        if (!stats || !stats.hasData) return 'unknown';
+        
+        if (recoveryTime <= stats.q1) return 'excellent';
+        if (recoveryTime <= stats.median) return 'good';
+        if (recoveryTime <= stats.q3) return 'average';
+        return 'needs_improvement';
+    }
+};
 
 let sessionTimeoutManager = {
     timeoutDuration: 5 * 60 * 1000, 
@@ -560,14 +716,9 @@ function initializeEventListeners() {
         });
     }
     
-    const saveResultBtn = document.getElementById('saveResultBtn');
+    const saveResultBtn = document.querySelector('.save-result-btn');
     if (saveResultBtn) {
         saveResultBtn.addEventListener('click', saveResult);
-    }
-    
-    const cancelTestBtn = document.getElementById('cancelTestBtn');
-    if (cancelTestBtn) {
-        cancelTestBtn.addEventListener('click', cancelTest);
     }
 }
 
@@ -740,6 +891,12 @@ function startMemoryTest() {
     }, 5000);
 }
 
+function showMemoryInput() {
+    document.getElementById('memoryTest').style.display = 'none';
+    document.getElementById('memoryInput').style.display = 'block';
+    document.getElementById('memoryAnswer').focus();
+}
+
 function checkMemory() {
     const answer = document.getElementById('memoryAnswer').value.trim();
     const correct = window.testResults.correctNumbers;
@@ -894,6 +1051,7 @@ function saveResult() {
         updateHistory();
         updateChart();
         updateRecoveryTimeTracking();
+        updateStatisticalAnalysis(); 
         alert('Post-conflict results saved successfully!');
         announceToScreenReader('Post-conflict results saved successfully', 'assertive');
     }
@@ -1003,6 +1161,13 @@ function updateChart() {
         y: rt.recoveryTime
     }));
 
+    const recoveryValues = window.recoveryTimes.map(rt => rt.recoveryTime);
+    const movingAvg = StatisticalAnalyzer.movingAverage(recoveryValues, 3);
+    const movingAvgData = window.recoveryTimes.map((rt, index) => ({
+        x: new Date(rt.timestamp),
+        y: movingAvg[index]
+    }));
+
     window.recoveryChartInstance = new Chart(ctx, {
         type: 'line',
         data: {
@@ -1033,6 +1198,16 @@ function updateChart() {
                     fill: true,
                     tension: 0.4,
                     borderDash: [5, 5],
+                    yAxisID: 'y'
+                },
+                {
+                    label: 'Recovery Trend (3-period MA)',
+                    data: movingAvgData,
+                    borderColor: '#f44336',
+                    borderWidth: 2,
+                    fill: false,
+                    tension: 0.4,
+                    pointRadius: 0,
                     yAxisID: 'y'
                 }
             ]
@@ -1188,6 +1363,122 @@ function updateRecoveryTimeline() {
     }
     
     timelineDiv.innerHTML = timelineHtml;
+}
+
+function updateStatisticalAnalysis() {
+    const recoveryTimeSection = document.getElementById('recoveryTimeSection');
+    
+    const existingInsights = document.querySelector('.statistical-insights');
+    if (existingInsights) {
+        existingInsights.remove();
+    }
+    
+    const stats = StatisticalAnalyzer.generateInsights(window.recoveryTimes);
+    
+    if (!stats.hasData) {
+        return;
+    }
+    
+    const insightsDiv = document.createElement('div');
+    insightsDiv.className = 'statistical-insights';
+    insightsDiv.setAttribute('role', 'region');
+    insightsDiv.setAttribute('aria-label', 'Statistical Analysis Insights');
+    
+    const patternClass = `pattern-${stats.pattern.type}`;
+    
+    let trendIcon = '';
+    let trendClass = '';
+    if (stats.trend.direction === 'improving') {
+        trendIcon = '📉';
+        trendClass = 'trend-down';
+    } else if (stats.trend.direction === 'worsening') {
+        trendIcon = '📈';
+        trendClass = 'trend-up';
+    } else {
+        trendIcon = '➡️';
+        trendClass = 'trend-neutral';
+    }
+    
+    let correlationHtml = '';
+    if (stats.intensityCorrelation) {
+        const correlationStrength = Math.abs(stats.intensityCorrelation);
+        const correlationDirection = stats.intensityCorrelation > 0 ? 'positive' : 'negative';
+        correlationHtml = `
+            <div class="insight-card">
+                <h4><i class="fas fa-link"></i> Intensity Correlation</h4>
+                <div class="insight-value">${(stats.intensityCorrelation * 100).toFixed(1)}%</div>
+                <div class="insight-trend ${correlationDirection === 'positive' ? 'trend-up' : 'trend-down'}">
+                    ${correlationDirection === 'positive' ? '↑' : '↓'} ${correlationStrength > 0.7 ? 'Strong' : correlationStrength > 0.3 ? 'Moderate' : 'Weak'} correlation
+                </div>
+            </div>
+        `;
+    }
+    
+    let predictionHtml = '';
+    if (stats.prediction) {
+        const confidenceClass = stats.prediction.confidence > 70 ? 'trend-improving' : 
+                               stats.prediction.confidence > 40 ? 'trend-stable' : 'trend-worsening';
+        predictionHtml = `
+            <div class="prediction-card">
+                <div class="prediction-title"><i class="fas fa-chart-line"></i> Next Recovery Prediction</div>
+                <div class="prediction-value">${stats.prediction.value}ms</div>
+                <div class="prediction-range">Range: ${stats.prediction.lowerBound} - ${stats.prediction.upperBound}ms</div>
+                <div class="insight-trend ${confidenceClass}">Confidence: ${stats.prediction.confidence}%</div>
+            </div>
+        `;
+    }
+    
+    insightsDiv.innerHTML = `
+        <div class="insights-header">
+            <i class="fas fa-chart-bar"></i>
+            <h3>Statistical Analysis & Predictions</h3>
+        </div>
+        
+        <div class="insights-grid">
+            <div class="insight-card">
+                <h4><i class="fas fa-calculator"></i> Distribution</h4>
+                <div class="insight-value">${stats.count} tests</div>
+                <div class="insight-trend">
+                    Q1: ${Math.round(stats.q1)}ms | Median: ${Math.round(stats.median)}ms | Q3: ${Math.round(stats.q3)}ms
+                </div>
+            </div>
+            
+            <div class="insight-card">
+                <h4><i class="fas fa-chart-line"></i> Variability</h4>
+                <div class="insight-value">±${Math.round(stats.stdDev)}ms</div>
+                <div class="insight-trend">
+                    Range: ${Math.round(stats.min)} - ${Math.round(stats.max)}ms
+                </div>
+            </div>
+            
+            <div class="insight-card">
+                <h4><i class="fas fa-trend"></i> Current Trend</h4>
+                <div class="insight-value">${trendIcon} ${stats.trend.direction}</div>
+                <div class="insight-trend ${trendClass}">
+                    ${stats.trend.strength.toFixed(1)}% change
+                </div>
+            </div>
+            
+            ${correlationHtml}
+        </div>
+        
+        <div class="pattern-analysis">
+            <span class="pattern-badge pattern-${stats.pattern.type}">${stats.pattern.type}</span>
+            <span>${stats.pattern.description}</span>
+        </div>
+        
+        ${predictionHtml}
+        
+        <div class="insight-footer">
+            Analysis based on last ${stats.count} recovery measurements
+            ${stats.count < 5 ? '· More data needed for better predictions' : ''}
+        </div>
+    `;
+    
+    const recoveryStats = document.querySelector('.recovery-stats');
+    if (recoveryStats) {
+        recoveryStats.parentNode.insertBefore(insightsDiv, recoveryStats.nextSibling);
+    }
 }
 
 // Clean up on page unload
