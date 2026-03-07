@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mood Log</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Mood Log</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="actions.html">Micro-Actions</a>
+            <a href="journal.html">What Helped Me</a>
+            <a href="insights.html">Weekly Insights</a>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <form id="moodForm">
+                <label>Mood:
+                    <select name="mood" required>
+                        <option value="Happy">Happy</option>
+                        <option value="Sad">Sad</option>
+                        <option value="Stressed">Stressed</option>
+                        <option value="Calm">Calm</option>
+                        <option value="Angry">Angry</option>
+                        <option value="Motivated">Motivated</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </label><br>
+                <label>Trigger:<br>
+                    <input type="text" name="trigger" placeholder="What caused this mood?">
+                </label><br>
+                <button type="submit">Log Mood</button>
+            </form>
+            <div id="moodList"></div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2026 Mood-to-Action Companion</p>
+    </footer>
+    <script src="log.js"></script>
+</body>
+</html>
