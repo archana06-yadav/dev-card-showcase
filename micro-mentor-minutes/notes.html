@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quick Notes</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Quick Notes</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="booking.html">Book a Slot</a>
+            <a href="calendar.html">Calendar Sync</a>
+            <a href="checklist.html">Follow-up Checklist</a>
+            <a href="stats.html">Mentor Impact Stats</a>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <form id="notesForm">
+                <label>Mentor Name: <input type="text" name="mentor" required></label><br>
+                <label>Notes:<br>
+                    <textarea name="notes" rows="4" required></textarea>
+                </label><br>
+                <button type="submit">Save Note</button>
+            </form>
+            <div id="notesList"></div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2026 Micro-Mentor Minutes</p>
+    </footer>
+    <script src="notes.js"></script>
+</body>
+</html>

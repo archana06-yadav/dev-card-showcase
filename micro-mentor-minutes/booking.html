@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Book a Micro-Mentor Slot</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Book a Micro-Mentor Slot</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="calendar.html">Calendar Sync</a>
+            <a href="notes.html">Quick Notes</a>
+            <a href="checklist.html">Follow-up Checklist</a>
+            <a href="stats.html">Mentor Impact Stats</a>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <form id="bookingForm">
+                <label>Topic:
+                    <select name="topic" required>
+                        <option value="Resume Review">Resume Review</option>
+                        <option value="Interview Prep">Interview Prep</option>
+                        <option value="Career Advice">Career Advice</option>
+                        <option value="Skill Guidance">Skill Guidance</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </label><br>
+                <label>Mentor Name: <input type="text" name="mentor" required></label><br>
+                <label>Date: <input type="date" name="date" required></label><br>
+                <label>Time: <input type="time" name="time" required></label><br>
+                <button type="submit">Book Slot</button>
+            </form>
+            <div id="bookingList"></div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2026 Micro-Mentor Minutes</p>
+    </footer>
+    <script src="booking.js"></script>
+</body>
+</html>
