@@ -251,3 +251,35 @@
         flex-direction: column;
     }
 }
+
+.input-group {
+    position: relative;
+}
+
+.character-counter {
+    font-size: 12px;
+    color: #6c757d;
+    text-align: right;
+    margin-top: 5px;
+    padding: 2px 5px;
+    border-radius: 3px;
+    background-color: #f1f3f5;
+    display: inline-block;
+    float: right;
+}
+
+.character-counter.warning {
+    color: #856404;
+    background-color: #fff3cd;
+}
+
+.character-counter.danger {
+    color: #721c24;
+    background-color: #f8d7da;
+}
+
+.input-group::after {
+    content: "";
+    clear: both;
+    display: table;
+}

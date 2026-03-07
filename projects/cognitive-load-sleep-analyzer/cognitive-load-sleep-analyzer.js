@@ -310,3 +310,140 @@ function resetForm() {
         resetBtn.style.backgroundColor = '#6c757d';
     }, 200);
 }
+
+// Add character counter functionality
+function initializeCharacterCounters() {
+    const workNotes = document.getElementById('workNotes');
+    const sleepNotes = document.getElementById('sleepNotes');
+    const workCounter = document.getElementById('workNotesCounter');
+    const sleepCounter = document.getElementById('sleepNotesCounter');
+    
+    const MAX_CHARS = 500;
+    
+    function updateCounter(textarea, counterElement) {
+        const currentLength = textarea.value.length;
+        counterElement.textContent = `${currentLength}/${MAX_CHARS} characters`;
+        
+        counterElement.classList.remove('warning', 'danger');
+        
+        if (currentLength >= MAX_CHARS) {
+            counterElement.classList.add('danger');
+        } else if (currentLength >= MAX_CHARS * 0.8) { 
+            counterElement.classList.add('warning');
+        }
+    }
+    
+    workNotes.addEventListener('input', function() {
+        updateCounter(this, workCounter);
+    });
+    
+    sleepNotes.addEventListener('input', function() {
+        updateCounter(this, sleepCounter);
+    });
+    
+    updateCounter(workNotes, workCounter);
+    updateCounter(sleepNotes, sleepCounter);
+}
+
+function logEntry() {
+    const date = document.getElementById('logDate').value;
+    const workHours = parseFloat(document.getElementById('workHours').value);
+    const cognitiveLoad = parseInt(document.getElementById('cognitiveLoad').value);
+    const sleepHours = parseFloat(document.getElementById('sleepHours').value);
+    const sleepQuality = parseInt(document.getElementById('sleepQuality').value);
+    const workNotes = document.getElementById('workNotes').value.trim();
+    const sleepNotes = document.getElementById('sleepNotes').value.trim();
+    
+    const MAX_CHARS = 500;
+    if (workNotes.length > MAX_CHARS || sleepNotes.length > MAX_CHARS) {
+        alert(`Notes cannot exceed ${MAX_CHARS} characters. Please shorten your notes.`);
+        return;
+    }
+
+    if (!date) {
+        alert('Please select a date.');
+        return;
+    }
+
+    if (isNaN(workHours) || workHours < 0 || workHours > 24) {
+        alert('Please enter valid work hours (0-24).');
+        return;
+    }
+
+    if (isNaN(sleepHours) || sleepHours < 0 || sleepHours > 24) {
+        alert('Please enter valid sleep hours (0-24).');
+        return;
+    }
+
+    const existingEntry = entries.find(entry => entry.date === date);
+    if (existingEntry) {
+        if (!confirm('An entry already exists for this date. Do you want to update it?')) {
+            return;
+        }
+        entries = entries.filter(entry => entry.date !== date);
+    }
+
+    const entry = {
+        id: Date.now(),
+        date,
+        workHours,
+        cognitiveLoad,
+        sleepHours,
+        sleepQuality,
+        workNotes,
+        sleepNotes
+    };
+
+    entries.push(entry);
+
+    entries.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    if (entries.length > 100) {
+        entries = entries.slice(-100);
+    }
+
+    localStorage.setItem('cognitiveLoadSleepEntries', JSON.stringify(entries));
+
+    resetForm();
+
+    updateStats();
+    updateChart();
+    updateEntriesList();
+}
+
+function resetForm() {
+    document.getElementById('logDate').value = '';
+    document.getElementById('workHours').value = '';
+    document.getElementById('cognitiveLoad').value = 5;
+    document.getElementById('sleepHours').value = '';
+    document.getElementById('sleepQuality').value = 7;
+    document.getElementById('workNotes').value = '';
+    document.getElementById('sleepNotes').value = '';
+    
+    updateLoadValue();
+    updateQualityValue();
+    
+    const workCounter = document.getElementById('workNotesCounter');
+    const sleepCounter = document.getElementById('sleepNotesCounter');
+    if (workCounter) workCounter.textContent = '0/500 characters';
+    if (sleepCounter) sleepCounter.textContent = '0/500 characters';
+    
+    const resetBtn = document.querySelector('.reset-btn');
+    resetBtn.style.backgroundColor = '#28a745';
+    setTimeout(() => {
+        resetBtn.style.backgroundColor = '#6c757d';
+    }, 200);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('logDate').value = today;
+
+    updateLoadValue();
+    updateQualityValue();
+    updateStats();
+    updateChart();
+    updateEntriesList();
+    
+    initializeCharacterCounters();
+});
