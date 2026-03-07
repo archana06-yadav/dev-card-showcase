@@ -1,6 +1,7 @@
 // cognitive-load-sleep-analyzer.js
 
 let entries = JSON.parse(localStorage.getItem('cognitiveLoadSleepEntries')) || [];
+let chartInstance = null;
 
 function updateLoadValue() {
     const value = document.getElementById('cognitiveLoad').value;
@@ -10,79 +11,6 @@ function updateLoadValue() {
 function updateQualityValue() {
     const value = document.getElementById('sleepQuality').value;
     document.getElementById('currentQualityValue').textContent = value;
-}
-
-function logEntry() {
-    const date = document.getElementById('logDate').value;
-    const workHours = parseFloat(document.getElementById('workHours').value);
-    const cognitiveLoad = parseInt(document.getElementById('cognitiveLoad').value);
-    const sleepHours = parseFloat(document.getElementById('sleepHours').value);
-    const sleepQuality = parseInt(document.getElementById('sleepQuality').value);
-    const workNotes = document.getElementById('workNotes').value.trim();
-    const sleepNotes = document.getElementById('sleepNotes').value.trim();
-
-    if (!date) {
-        alert('Please select a date.');
-        return;
-    }
-
-    if (isNaN(workHours) || workHours < 0 || workHours > 24) {
-        alert('Please enter valid work hours (0-24).');
-        return;
-    }
-
-    if (isNaN(sleepHours) || sleepHours < 0 || sleepHours > 24) {
-        alert('Please enter valid sleep hours (0-24).');
-        return;
-    }
-
-    // Check if entry already exists for this date
-    const existingEntry = entries.find(entry => entry.date === date);
-    if (existingEntry) {
-        if (!confirm('An entry already exists for this date. Do you want to update it?')) {
-            return;
-        }
-        // Remove existing entry
-        entries = entries.filter(entry => entry.date !== date);
-    }
-
-    const entry = {
-        id: Date.now(),
-        date,
-        workHours,
-        cognitiveLoad,
-        sleepHours,
-        sleepQuality,
-        workNotes,
-        sleepNotes
-    };
-
-    entries.push(entry);
-
-    // Sort by date
-    entries.sort((a, b) => new Date(a.date) - new Date(b.date));
-
-    // Keep only last 100 entries
-    if (entries.length > 100) {
-        entries = entries.slice(-100);
-    }
-
-    localStorage.setItem('cognitiveLoadSleepEntries', JSON.stringify(entries));
-
-    // Clear form
-    document.getElementById('logDate').value = '';
-    document.getElementById('workHours').value = '';
-    document.getElementById('cognitiveLoad').value = 5;
-    document.getElementById('sleepHours').value = '';
-    document.getElementById('sleepQuality').value = 7;
-    document.getElementById('workNotes').value = '';
-    document.getElementById('sleepNotes').value = '';
-    updateLoadValue();
-    updateQualityValue();
-
-    updateStats();
-    updateChart();
-    updateEntriesList();
 }
 
 function calculateCorrelation(x, y) {
@@ -111,25 +39,168 @@ function updateStats() {
         document.getElementById('correlation').textContent = 'N/A';
         document.getElementById('avgWorkHours').textContent = '0.0h';
         document.getElementById('avgSleepQuality').textContent = '0.0';
+    } else {
+        // Calculate correlation between cognitive load and sleep quality
+        const workLoads = recentEntries.map(entry => entry.cognitiveLoad);
+        const sleepQualities = recentEntries.map(entry => entry.sleepQuality);
+        const correlation = calculateCorrelation(workLoads, sleepQualities);
+
+        // Calculate averages
+        const avgWorkHours = (recentEntries.reduce((sum, entry) => sum + entry.workHours, 0) / recentEntries.length).toFixed(1);
+        const avgSleepQuality = (recentEntries.reduce((sum, entry) => sum + entry.sleepQuality, 0) / recentEntries.length).toFixed(1);
+
+        document.getElementById('correlation').textContent = correlation;
+        document.getElementById('avgWorkHours').textContent = `${avgWorkHours}h`;
+        document.getElementById('avgSleepQuality').textContent = avgSleepQuality;
+    }
+    
+    // Update weekly summary
+    updateWeeklySummary();
+}
+
+function updateWeeklySummary() {
+    // Get entries from last 7 days
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const recentEntries = entries.filter(entry => new Date(entry.date) >= sevenDaysAgo);
+    
+    // Get summary elements
+    const bestSleepDayEl = document.getElementById('bestSleepDay');
+    const bestSleepDetailsEl = document.getElementById('bestSleepDetails');
+    const bestSleepDateEl = document.getElementById('bestSleepDate');
+    
+    const highestLoadDayEl = document.getElementById('highestLoadDay');
+    const highestLoadDetailsEl = document.getElementById('highestLoadDetails');
+    const highestLoadDateEl = document.getElementById('highestLoadDate');
+    
+    const mostProductiveDayEl = document.getElementById('mostProductiveDay');
+    const mostProductiveDetailsEl = document.getElementById('mostProductiveDetails');
+    const mostProductiveDateEl = document.getElementById('mostProductiveDate');
+    
+    if (recentEntries.length === 0) {
+        // No data in last 7 days
+        if (bestSleepDayEl) {
+            bestSleepDayEl.textContent = 'No Data';
+            bestSleepDetailsEl.innerHTML = '<i class="fas fa-info-circle"></i><span>Log entries to see insights</span>';
+            bestSleepDateEl.innerHTML = '<i class="far fa-calendar-alt"></i><span>Last 7 days</span>';
+        }
+        
+        if (highestLoadDayEl) {
+            highestLoadDayEl.textContent = 'No Data';
+            highestLoadDetailsEl.innerHTML = '<i class="fas fa-info-circle"></i><span>Log entries to see insights</span>';
+            highestLoadDateEl.innerHTML = '<i class="far fa-calendar-alt"></i><span>Last 7 days</span>';
+        }
+        
+        if (mostProductiveDayEl) {
+            mostProductiveDayEl.textContent = 'No Data';
+            mostProductiveDetailsEl.innerHTML = '<i class="fas fa-info-circle"></i><span>Log entries to see insights</span>';
+            mostProductiveDateEl.innerHTML = '<i class="far fa-calendar-alt"></i><span>Last 7 days</span>';
+        }
         return;
     }
+    
+    // 1. Best Sleep Day (highest sleep quality)
+    const bestSleepEntry = recentEntries.reduce((best, current) => {
+        return (current.sleepQuality > best.sleepQuality) ? current : best;
+    }, recentEntries[0]);
+    
+    const bestSleepDate = new Date(bestSleepEntry.date);
+    bestSleepDayEl.textContent = bestSleepDate.toLocaleDateString('en-US', { weekday: 'long' });
+    bestSleepDetailsEl.innerHTML = `
+        <i class="fas fa-star"></i>
+        <span>Quality: ${bestSleepEntry.sleepQuality}/10 (${bestSleepEntry.sleepHours}h)</span>
+    `;
+    bestSleepDateEl.innerHTML = `
+        <i class="far fa-calendar-alt"></i>
+        <span>${bestSleepDate.toLocaleDateString()}</span>
+    `;
+    
+    // 2. Highest Cognitive Load Day
+    const highestLoadEntry = recentEntries.reduce((highest, current) => {
+        return (current.cognitiveLoad > highest.cognitiveLoad) ? current : highest;
+    }, recentEntries[0]);
+    
+    const highestLoadDate = new Date(highestLoadEntry.date);
+    highestLoadDayEl.textContent = highestLoadDate.toLocaleDateString('en-US', { weekday: 'long' });
+    highestLoadDetailsEl.innerHTML = `
+        <i class="fas fa-tachometer-alt"></i>
+        <span>Load: ${highestLoadEntry.cognitiveLoad}/10 (${highestLoadEntry.workHours}h)</span>
+    `;
+    highestLoadDateEl.innerHTML = `
+        <i class="far fa-calendar-alt"></i>
+        <span>${highestLoadDate.toLocaleDateString()}</span>
+    `;
+    
+    const productiveEntries = recentEntries.map(entry => ({
+        ...entry,
+        productivityScore: (entry.workHours * (entry.sleepQuality / 10)) // Work hours weighted by sleep quality
+    }));
+    
+    const mostProductiveEntry = productiveEntries.reduce((best, current) => {
+        return (current.productivityScore > best.productivityScore) ? current : best;
+    }, productiveEntries[0]);
+    
+    const productiveDate = new Date(mostProductiveEntry.date);
+    mostProductiveDayEl.textContent = productiveDate.toLocaleDateString('en-US', { weekday: 'long' });
+    mostProductiveDetailsEl.innerHTML = `
+        <i class="fas fa-clock"></i>
+        <span>Work: ${mostProductiveEntry.workHours}h (Quality: ${mostProductiveEntry.sleepQuality}/10)</span>
+    `;
+    mostProductiveDateEl.innerHTML = `
+        <i class="far fa-calendar-alt"></i>
+        <span>${productiveDate.toLocaleDateString()}</span>
+    `;
+    
+    addInsightBadges(recentEntries);
+}
 
-    // Calculate correlation between cognitive load and sleep quality
-    const workLoads = recentEntries.map(entry => entry.cognitiveLoad);
-    const sleepQualities = recentEntries.map(entry => entry.sleepQuality);
-    const correlation = calculateCorrelation(workLoads, sleepQualities);
-
-    // Calculate averages
-    const avgWorkHours = (recentEntries.reduce((sum, entry) => sum + entry.workHours, 0) / recentEntries.length).toFixed(1);
-    const avgSleepQuality = (recentEntries.reduce((sum, entry) => sum + entry.sleepQuality, 0) / recentEntries.length).toFixed(1);
-
-    document.getElementById('correlation').textContent = correlation;
-    document.getElementById('avgWorkHours').textContent = `${avgWorkHours}h`;
-    document.getElementById('avgSleepQuality').textContent = avgSleepQuality;
+function addInsightBadges(recentEntries) {
+    const summaryCards = document.querySelectorAll('.summary-card');
+    
+    summaryCards.forEach(card => {
+        const existingBadge = card.querySelector('.insight-badge');
+        if (existingBadge) {
+            existingBadge.remove();
+        }
+    });
+    
+    if (recentEntries.length < 3) return;
+    
+    const avgSleepQuality = recentEntries.reduce((sum, e) => sum + e.sleepQuality, 0) / recentEntries.length;
+    const avgCognitiveLoad = recentEntries.reduce((sum, e) => sum + e.cognitiveLoad, 0) / recentEntries.length;
+    const avgWorkHours = recentEntries.reduce((sum, e) => sum + e.workHours, 0) / recentEntries.length;
+    
+    if (avgSleepQuality < 5 && summaryCards[0]) {
+        const bestSleepCard = summaryCards[0];
+        const badge = document.createElement('div');
+        badge.className = 'insight-badge';
+        badge.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Sleep quality needs improvement';
+        bestSleepCard.appendChild(badge);
+    }
+   
+    if (avgCognitiveLoad > 7 && summaryCards[1]) {
+        const highestLoadCard = summaryCards[1];
+        const badge = document.createElement('div');
+        badge.className = 'insight-badge';
+        badge.innerHTML = '<i class="fas fa-exclamation-circle"></i> High cognitive load this week';
+        highestLoadCard.appendChild(badge);
+    }
+    
+    if (avgWorkHours > 8 && avgSleepQuality < 6 && summaryCards[2]) {
+        const productiveCard = summaryCards[2];
+        const badge = document.createElement('div');
+        badge.className = 'insight-badge';
+        badge.innerHTML = '<i class="fas fa-lightbulb"></i> Consider work-life balance';
+        productiveCard.appendChild(badge);
+    }
 }
 
 function updateChart() {
     const ctx = document.getElementById('correlationChart').getContext('2d');
+    
+    if (chartInstance) {
+        chartInstance.destroy();
+    }
 
     // Prepare data for last 30 days
     const thirtyDaysAgo = new Date();
@@ -147,7 +218,7 @@ function updateChart() {
     const sleepQualityData = chartEntries.map(entry => entry.sleepQuality);
     const workHoursData = chartEntries.map(entry => entry.workHours);
 
-    new Chart(ctx, {
+    chartInstance = new Chart(ctx, {
         type: 'line',
         data: {
             labels: labels,
@@ -214,6 +285,8 @@ function updateChart() {
 
 function updateEntriesList() {
     const entriesList = document.getElementById('entriesList');
+    if (!entriesList) return;
+    
     entriesList.innerHTML = '';
 
     // Show last 7 entries
@@ -273,42 +346,10 @@ function deleteEntry(id) {
     if (confirm('Are you sure you want to delete this entry?')) {
         entries = entries.filter(entry => entry.id !== id);
         localStorage.setItem('cognitiveLoadSleepEntries', JSON.stringify(entries));
-        updateStats();
+        updateStats(); 
         updateChart();
         updateEntriesList();
     }
-}
-
-// Initialize
-document.addEventListener('DOMContentLoaded', function() {
-    // Set today's date as default
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('logDate').value = today;
-
-    updateLoadValue();
-    updateQualityValue();
-    updateStats();
-    updateChart();
-    updateEntriesList();
-});
-
-function resetForm() {
-    document.getElementById('logDate').value = '';
-    document.getElementById('workHours').value = '';
-    document.getElementById('cognitiveLoad').value = 5;
-    document.getElementById('sleepHours').value = '';
-    document.getElementById('sleepQuality').value = 7;
-    document.getElementById('workNotes').value = '';
-    document.getElementById('sleepNotes').value = '';
-    
-    updateLoadValue();
-    updateQualityValue();
-    
-    const resetBtn = document.querySelector('.reset-btn');
-    resetBtn.style.backgroundColor = '#28a745';
-    setTimeout(() => {
-        resetBtn.style.backgroundColor = '#6c757d';
-    }, 200);
 }
 
 // Add character counter functionality
@@ -321,6 +362,8 @@ function initializeCharacterCounters() {
     const MAX_CHARS = 500;
     
     function updateCounter(textarea, counterElement) {
+        if (!textarea || !counterElement) return;
+        
         const currentLength = textarea.value.length;
         counterElement.textContent = `${currentLength}/${MAX_CHARS} characters`;
         
@@ -333,16 +376,19 @@ function initializeCharacterCounters() {
         }
     }
     
-    workNotes.addEventListener('input', function() {
-        updateCounter(this, workCounter);
-    });
+    if (workNotes && workCounter) {
+        workNotes.addEventListener('input', function() {
+            updateCounter(this, workCounter);
+        });
+        updateCounter(workNotes, workCounter);
+    }
     
-    sleepNotes.addEventListener('input', function() {
-        updateCounter(this, sleepCounter);
-    });
-    
-    updateCounter(workNotes, workCounter);
-    updateCounter(sleepNotes, sleepCounter);
+    if (sleepNotes && sleepCounter) {
+        sleepNotes.addEventListener('input', function() {
+            updateCounter(this, sleepCounter);
+        });
+        updateCounter(sleepNotes, sleepCounter);
+    }
 }
 
 function logEntry() {
@@ -406,7 +452,7 @@ function logEntry() {
 
     resetForm();
 
-    updateStats();
+    updateStats(); 
     updateChart();
     updateEntriesList();
 }
@@ -429,21 +475,32 @@ function resetForm() {
     if (sleepCounter) sleepCounter.textContent = '0/500 characters';
     
     const resetBtn = document.querySelector('.reset-btn');
-    resetBtn.style.backgroundColor = '#28a745';
-    setTimeout(() => {
-        resetBtn.style.backgroundColor = '#6c757d';
-    }, 200);
+    if (resetBtn) {
+        resetBtn.style.backgroundColor = '#28a745';
+        setTimeout(() => {
+            resetBtn.style.backgroundColor = '#6c757d';
+        }, 200);
+    }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
     const today = new Date().toISOString().split('T')[0];
-    document.getElementById('logDate').value = today;
+    const dateInput = document.getElementById('logDate');
+    if (dateInput) {
+        dateInput.value = today;
+    }
 
     updateLoadValue();
     updateQualityValue();
-    updateStats();
+    updateStats(); 
     updateChart();
     updateEntriesList();
     
     initializeCharacterCounters();
 });
+
+window.updateLoadValue = updateLoadValue;
+window.updateQualityValue = updateQualityValue;
+window.logEntry = logEntry;
+window.deleteEntry = deleteEntry;
+window.resetForm = resetForm;
