@@ -1,0 +1,42 @@
+body{
+background:#f3f7fb;
+font-family:Arial;
+text-align:center;
+color:#333;
+}
+
+h1{
+color:#2563eb;
+}
+
+#game{
+background:white;
+border:3px solid #2563eb;
+margin-top:20px;
+border-radius:10px;
+box-shadow:0 10px 20px rgba(0,0,0,0.1);
+cursor:crosshair;
+}
+
+.hud{
+margin:10px;
+}
+
+button{
+padding:6px 12px;
+margin:5px;
+border:none;
+background:#2563eb;
+color:white;
+cursor:pointer;
+border-radius:5px;
+}
+
+button:hover{
+background:#1e40af;
+}
+
+.hint{
+color:#666;
+margin-top:10px;
+}
