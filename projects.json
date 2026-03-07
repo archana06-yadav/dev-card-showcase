@@ -12,6 +12,18 @@
   }
 },
 {
+  "title": "Minimal Pixel Shooter – Neon Arcade",
+  "description": "A minimal neon-style pixel shooter where players control a small ship, dodge incoming enemies, and shoot them to survive. The game features keyboard movement, bullet mechanics, enemy waves, power-up drops, and a dynamic scoring system while maintaining a clean minimal UI.",
+  "tags": ["HTML", "CSS", "JavaScript", "Game", "Shooter", "Arcade"],
+  "links": {
+    "live": "./projects/minimal-pixel-shooter/"
+  },
+  "author": {
+    "name": "Anvesha",
+    "github": "https://github.com/your-github-username"
+  }
+},
+{
   "title": "Word Dodge – Typing Arcade Challenge",
   "description": "A fast-paced typing arcade game where players dodge falling words and destroy them by typing them quickly. Featuring player movement controls, falling word obstacles, dynamic scoring, and increasing difficulty, the game combines typing skills with reflex-based gameplay.",
   "tags": ["HTML", "CSS", "JavaScript", "Game", "Typing", "Arcade"],
