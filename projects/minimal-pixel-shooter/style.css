@@ -1,0 +1,31 @@
+body{
+background:#0b0d12;
+color:white;
+font-family:Arial;
+text-align:center;
+}
+
+h1{
+color:#00f7ff;
+}
+
+#game{
+background:#05070a;
+border:3px solid #00f7ff;
+margin-top:20px;
+}
+
+button{
+padding:6px 12px;
+background:#00f7ff;
+border:none;
+cursor:pointer;
+}
+
+.hud{
+margin:10px;
+}
+
+.hint{
+color:#aaa;
+}
