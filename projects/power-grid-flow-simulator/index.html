@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Power Grid Flow Simulator</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>⚡ Power Grid Flow Simulator</h1>
+
+<div class="controls">
+<button id="plant1">Toggle Plant 1</button>
+<button id="plant2">Toggle Plant 2</button>
+<button id="restart">Restart</button>
+</div>
+
+<div class="status">
+Energy Output: <span id="energy">0</span> MW
+</div>
+
+<canvas id="grid" width="600" height="400"></canvas>
+
+<p class="hint">
+Turn on power plants to send electricity through the grid and power cities.
+</p>
+
+<script src="script.js"></script>
+</body>
+</html>

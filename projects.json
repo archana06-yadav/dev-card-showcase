@@ -72,6 +72,18 @@
   }
 },
 {
+  "title": "Power Grid Flow Simulator",
+  "description": "An interactive simulator that visualizes electricity flowing from power plants to cities. Toggle power plants, observe energy distribution, and monitor the grid through a modern light dashboard interface.",
+  "tags": ["HTML", "CSS", "JavaScript", "Simulation", "Energy"],
+  "links": {
+    "live": "./projects/power-grid-flow-simulator/"
+  },
+  "author": {
+    "name": "Anvesha",
+    "github": "https://github.com/your-github-username"
+  }
+},
+{
   "title": "Word Dodge – Typing Arcade Challenge",
   "description": "A fast-paced typing arcade game where players dodge falling words and destroy them by typing them quickly. Featuring player movement controls, falling word obstacles, dynamic scoring, and increasing difficulty, the game combines typing skills with reflex-based gameplay.",
   "tags": ["HTML", "CSS", "JavaScript", "Game", "Typing", "Arcade"],
