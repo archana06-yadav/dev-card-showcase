@@ -48,6 +48,18 @@
   }
 },
 {
+  "title": "Invisible Enemy Shooter – Radar Challenge",
+  "description": "A unique shooting game where enemies remain invisible until revealed by a radar scan. Players must use the radar pulse strategically to locate enemies and click to eliminate them before they overwhelm the arena.",
+  "tags": ["HTML", "CSS", "JavaScript", "Game", "Shooter"],
+  "links": {
+    "live": "./projects/invisible-enemy-shooter/"
+  },
+  "author": {
+    "name": "Anvesha",
+    "github": "https://github.com/your-github-username"
+  }
+},
+{
   "title": "Word Dodge – Typing Arcade Challenge",
   "description": "A fast-paced typing arcade game where players dodge falling words and destroy them by typing them quickly. Featuring player movement controls, falling word obstacles, dynamic scoring, and increasing difficulty, the game combines typing skills with reflex-based gameplay.",
   "tags": ["HTML", "CSS", "JavaScript", "Game", "Typing", "Arcade"],
