@@ -1858,3 +1858,280 @@ input:checked + .toggle-slider:before {
 .area-color.productive { background: #28a745; }
 .area-color.moderate { background: #ffc107; }
 .area-color.unproductive { background: #dc3545; }
+
+/* Burnout Risk Section */
+.burnout-risk-section {
+    background: linear-gradient(135deg, #ff6b6b 0%, #c92a2a 100%);
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 40px;
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.burnout-risk-section h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: white;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.burnout-risk-section h2 i {
+    font-size: 28px;
+    color: #ffd700;
+}
+
+.risk-score-container {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.risk-gauge {
+    margin-bottom: 25px;
+}
+
+.risk-gauge-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.risk-label {
+    font-size: 16px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.risk-value {
+    font-size: 32px;
+    font-weight: bold;
+    color: white;
+}
+
+.risk-progress-bar {
+    width: 100%;
+    height: 20px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.risk-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4CAF50, #ffc107, #dc3545);
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
+
+.risk-status {
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+    padding: 8px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.risk-factors {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.risk-factor-card {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: transform 0.3s ease;
+}
+
+.risk-factor-card:hover {
+    transform: translateY(-3px);
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.risk-factor-card.warning {
+    border-left: 4px solid #ffc107;
+}
+
+.risk-factor-card.danger {
+    border-left: 4px solid #dc3545;
+}
+
+.factor-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: white;
+}
+
+.factor-content {
+    flex: 1;
+}
+
+.factor-name {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.factor-value {
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 5px;
+}
+
+.factor-progress {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.factor-progress-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}
+
+#factorConsecutive .factor-progress-fill {
+    background: linear-gradient(90deg, #ffc107, #dc3545);
+}
+
+#factorSleepDebt .factor-progress-fill {
+    background: linear-gradient(90deg, #ffc107, #dc3545);
+}
+
+#factorDecline .factor-progress-fill {
+    background: linear-gradient(90deg, #ffc107, #dc3545);
+}
+
+.risk-recommendations {
+    margin: 20px 0;
+}
+
+.recommendation-card {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border-left: 4px solid;
+    animation: slideIn 0.3s ease;
+}
+
+.recommendation-card.low-risk {
+    border-left-color: #4CAF50;
+}
+
+.recommendation-card.low-risk i {
+    color: #4CAF50;
+}
+
+.recommendation-card.moderate-risk {
+    border-left-color: #ffc107;
+}
+
+.recommendation-card.moderate-risk i {
+    color: #ffc107;
+}
+
+.recommendation-card.high-risk {
+    border-left-color: #dc3545;
+}
+
+.recommendation-card.high-risk i {
+    color: #dc3545;
+}
+
+.recommendation-card i {
+    font-size: 24px;
+}
+
+.recommendation-text {
+    flex: 1;
+    font-size: 16px;
+    line-height: 1.5;
+    color: white;
+}
+
+.risk-history {
+    margin-top: 30px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.risk-history h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: white;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.risk-history h3 i {
+    color: #ffd700;
+}
+
+.risk-history-chart-container {
+    height: 200px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 10px;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .risk-factors {
+        grid-template-columns: 1fr;
+    }
+    
+    .risk-factor-card {
+        padding: 12px;
+    }
+    
+    .risk-value {
+        font-size: 28px;
+    }
+    
+    .recommendation-card {
+        padding: 12px 15px;
+    }
+}

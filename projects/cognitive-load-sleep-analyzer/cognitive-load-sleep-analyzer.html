@@ -34,6 +34,73 @@
         patterns.
       </p>
 
+      <!-- Burnout Risk Calculator Section -->
+      <div class="burnout-risk-section">
+        <h2><i class="fas fa-exclamation-triangle"></i> Burnout Risk Calculator</h2>
+        
+        <div class="risk-score-container">
+          <div class="risk-gauge">
+            <div class="risk-gauge-header">
+              <span class="risk-label">Current Risk Level</span>
+              <span class="risk-value" id="burnoutRiskScore">0</span>
+            </div>
+            <div class="risk-progress-bar">
+              <div class="risk-progress-fill" id="burnoutRiskFill" style="width: 0%"></div>
+            </div>
+            <div class="risk-status" id="burnoutRiskStatus">Low Risk</div>
+          </div>
+          
+          <div class="risk-factors">
+            <div class="risk-factor-card" id="factorConsecutive">
+              <div class="factor-icon"><i class="fas fa-calendar-week"></i></div>
+              <div class="factor-content">
+                <div class="factor-name">Consecutive High-Load Days</div>
+                <div class="factor-value" id="consecutiveDaysValue">0</div>
+                <div class="factor-progress">
+                  <div class="factor-progress-fill" id="consecutiveProgress" style="width: 0%"></div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="risk-factor-card" id="factorSleepDebt">
+              <div class="factor-icon"><i class="fas fa-clock"></i></div>
+              <div class="factor-content">
+                <div class="factor-name">Sleep Debt Impact</div>
+                <div class="factor-value" id="sleepDebtFactorValue">0</div>
+                <div class="factor-progress">
+                  <div class="factor-progress-fill" id="sleepDebtProgress" style="width: 0%"></div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="risk-factor-card" id="factorDecline">
+              <div class="factor-icon"><i class="fas fa-chart-line"></i></div>
+              <div class="factor-content">
+                <div class="factor-name">Sleep Quality Decline</div>
+                <div class="factor-value" id="sleepDeclineValue">0%</div>
+                <div class="factor-progress">
+                  <div class="factor-progress-fill" id="sleepDeclineProgress" style="width: 0%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="risk-recommendations" id="riskRecommendations">
+          <div class="recommendation-card low-risk">
+            <i class="fas fa-smile"></i>
+            <div class="recommendation-text">You're doing great! Maintain your current habits.</div>
+          </div>
+        </div>
+        
+        <div class="risk-history" id="riskHistory">
+          <h3><i class="fas fa-history"></i> Risk History</h3>
+          <div class="risk-history-chart-container">
+            <canvas id="riskHistoryChart"></canvas>
+          </div>
+        </div>
+      </div>
+
       <!-- Sleep Debt Calculator Section -->
       <div class="sleep-debt-section">
         <h2><i class="fas fa-clock"></i> Sleep Debt Calculator</h2>
