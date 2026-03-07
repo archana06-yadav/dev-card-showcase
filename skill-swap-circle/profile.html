@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Skill Profile</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>My Skill Profile</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="match.html">Find a Match</a>
+            <a href="schedule.html">Schedule Session</a>
+            <a href="progress.html">Progress Tracker</a>
+            <a href="review.html">Reviews</a>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <form id="profileForm">
+                <label>Name: <input type="text" name="name" required></label><br>
+                <label>Email: <input type="email" name="email" required></label><br>
+                <label>Skills you can teach:<br>
+                    <textarea name="teachSkills" rows="3" required></textarea>
+                </label><br>
+                <label>Skills you want to learn:<br>
+                    <textarea name="learnSkills" rows="3" required></textarea>
+                </label><br>
+                <button type="submit">Save Profile</button>
+            </form>
+            <div id="profileData"></div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2026 Skill Swap Circle</p>
+    </footer>
+    <script src="profile.js"></script>
+</body>
+</html>

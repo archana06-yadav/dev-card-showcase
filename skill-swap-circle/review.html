@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reviews & Ratings</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Reviews & Ratings</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="profile.html">My Profile</a>
+            <a href="match.html">Find a Match</a>
+            <a href="schedule.html">Schedule Session</a>
+            <a href="progress.html">Progress Tracker</a>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <form id="reviewForm">
+                <label>Partner name: <input type="text" name="partner" required></label><br>
+                <label>Review:<br>
+                    <textarea name="review" rows="3" required></textarea>
+                </label><br>
+                <label>Rating:
+                    <select name="rating" required>
+                        <option value="5">5 - Excellent</option>
+                        <option value="4">4 - Good</option>
+                        <option value="3">3 - Average</option>
+                        <option value="2">2 - Fair</option>
+                        <option value="1">1 - Poor</option>
+                    </select>
+                </label><br>
+                <button type="submit">Submit Review</button>
+            </form>
+            <div id="reviewList"></div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2026 Skill Swap Circle</p>
+    </footer>
+    <script src="review.js"></script>
+</body>
+</html>
