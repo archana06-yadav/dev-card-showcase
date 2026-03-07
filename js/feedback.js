@@ -42,35 +42,6 @@ document.addEventListener("DOMContentLoaded", function () {
     animateCircles();
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-
-    function initThemeToggle() {
-
-        const themeToggle = document.getElementById("themeToggle");
-
-        if (!themeToggle) {
-            // retry if navbar not loaded yet
-            setTimeout(initThemeToggle, 100);
-            return;
-        }
-
-        themeToggle.addEventListener("click", () => {
-
-            if (document.body.classList.contains("theme-dark")) {
-                document.body.classList.remove("theme-dark");
-                document.body.classList.add("theme-light");
-            } else {
-                document.body.classList.remove("theme-light");
-                document.body.classList.add("theme-dark");
-            }
-
-        });
-    }
-
-    initThemeToggle();
-
-});
-
 // Navbar toggle
 const hamburger = document.querySelector('.hamburger');
 const navLinks = document.querySelector('.nav-links');
@@ -284,4 +255,30 @@ document.addEventListener('keydown', (e) => {
             stars.forEach(star => star.classList.remove('active'));
         }
     }
+});
+
+document.addEventListener("navbarLoaded", () => {
+    const themeToggle = document.getElementById("themeToggle");
+    if (!themeToggle) return;
+
+    function setTheme(theme) {
+        if (theme === 'dark') {
+            document.body.classList.add('theme-dark');
+        } else {
+            document.body.classList.remove('theme-dark');
+        }
+        localStorage.setItem('theme', theme);
+        themeToggle.textContent = theme === 'dark' ? '🌙' : '☀️';
+    }
+
+    function toggleTheme() {
+        const isDark = document.body.classList.contains('theme-dark');
+        setTheme(isDark ? 'light' : 'dark');
+    }
+
+    // Apply saved theme on load
+    const saved = localStorage.getItem('theme') || 'dark';
+    setTheme(saved);
+
+    themeToggle.addEventListener('click', toggleTheme);
 });

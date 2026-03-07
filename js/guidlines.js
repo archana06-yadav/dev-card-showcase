@@ -152,3 +152,25 @@
             
             animateCircles();
         });
+
+// Theme Toggle
+document.addEventListener("navbarLoaded", () => {
+    const themeToggle = document.getElementById("themeToggle");
+    const body = document.body;
+
+    if (!themeToggle) return;
+
+    function setTheme(theme) {
+        body.setAttribute("data-theme", theme);
+        localStorage.setItem("theme", theme);
+        themeToggle.textContent = theme === "dark" ? "🌙" : "☀️";
+    }
+
+    function toggleTheme() {
+        const currentTheme = body.getAttribute("data-theme") || "dark";
+        setTheme(currentTheme === "dark" ? "light" : "dark");
+    }
+
+    setTheme(localStorage.getItem("theme") || "dark");
+    themeToggle.addEventListener("click", toggleTheme);
+});
