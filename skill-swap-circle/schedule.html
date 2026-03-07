@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Schedule Session</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Schedule a Session</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="profile.html">My Profile</a>
+            <a href="match.html">Find a Match</a>
+            <a href="progress.html">Progress Tracker</a>
+            <a href="review.html">Reviews</a>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <form id="scheduleForm">
+                <label>Skill to swap: <input type="text" name="skill" required></label><br>
+                <label>Partner name: <input type="text" name="partner" required></label><br>
+                <label>Date: <input type="date" name="date" required></label><br>
+                <label>Time: <input type="time" name="time" required></label><br>
+                <button type="submit">Schedule</button>
+            </form>
+            <div id="scheduledSessions"></div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2026 Skill Swap Circle</p>
+    </footer>
+    <script src="schedule.js"></script>
+</body>
+</html>
