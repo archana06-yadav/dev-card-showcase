@@ -207,3 +207,47 @@
         grid-template-columns: 1fr;
     }
 }
+
+.button-container {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.log-btn, .reset-btn {
+    flex: 1;
+    padding: 12px 24px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.log-btn {
+    background: #4fd1ff;
+    color: white;
+}
+
+.log-btn:hover {
+    background: #3bb8e6;
+}
+
+.reset-btn {
+    background: #6c757d;
+    color: white;
+}
+
+.reset-btn:hover {
+    background: #5a6268;
+}
+
+.reset-btn:active {
+    transform: scale(0.98);
+}
+
+@media (max-width: 480px) {
+    .button-container {
+        flex-direction: column;
+    }
+}
