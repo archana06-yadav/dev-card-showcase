@@ -1,3 +1,31 @@
+// ── Theme 
+let themeInitDone = false;
+
+function initTheme() {
+    if (themeInitDone) return;
+    const btn = document.getElementById("themeToggle");
+    if (!btn) { setTimeout(initTheme, 50); return; }
+    themeInitDone = true;
+
+    function applyTheme(theme) {
+        document.body.setAttribute("data-theme", theme);
+        document.documentElement.setAttribute("data-theme", theme);
+        document.body.classList.remove("theme-dark", "light-mode");
+        localStorage.setItem("theme", theme);
+        btn.textContent = theme === "dark" ? "🌙" : "☀️";
+    }
+
+    btn.addEventListener("click", function () {
+        const current = document.body.getAttribute("data-theme") || "dark";
+        applyTheme(current === "dark" ? "light" : "dark");
+    });
+
+    applyTheme(localStorage.getItem("theme") || "dark");
+}
+
+document.addEventListener("DOMContentLoaded", initTheme);
+document.addEventListener("navbarLoaded", initTheme);
+
 // Global variables
 let allProjectsData = []; // Combined static and JSON projects
 let filteredProjects = []; // Currently filtered projects

@@ -1,3 +1,32 @@
+// ── Theme 
+let themeInitDone = false;
+
+function initTheme() {
+    if (themeInitDone) return;
+    const btn = document.getElementById("themeToggle");
+    if (!btn) { setTimeout(initTheme, 50); return; }
+    themeInitDone = true;
+
+    function applyTheme(theme) {
+        document.body.setAttribute("data-theme", theme);
+        document.documentElement.setAttribute("data-theme", theme);
+        document.body.classList.remove("theme-dark", "light-mode");
+        localStorage.setItem("theme", theme);
+        btn.textContent = theme === "dark" ? "🌙" : "☀️";
+    }
+
+    btn.addEventListener("click", function () {
+        const current = document.body.getAttribute("data-theme") || "dark";
+        applyTheme(current === "dark" ? "light" : "dark");
+    });
+
+    applyTheme(localStorage.getItem("theme") || "dark");
+}
+
+document.addEventListener("DOMContentLoaded", initTheme);
+document.addEventListener("navbarLoaded", initTheme);
+
+// ── Cursor Trail 
 document.addEventListener("DOMContentLoaded", function () {
     const coords = { x: 0, y: 0 };
     const circles = document.querySelectorAll(".circle");
@@ -9,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     window.addEventListener("mousemove", function (e) {
         coords.x = e.pageX;
-        coords.y = e.pageY - window.scrollY; // Adjust for vertical scroll position
+        coords.y = e.pageY - window.scrollY;
     });
 
     function animateCircles() {
@@ -25,196 +54,93 @@ document.addEventListener("DOMContentLoaded", function () {
             x += (nextCircle.x - x) * 0.3;
             y += (nextCircle.y - y) * 0.3;
         });
-
         requestAnimationFrame(animateCircles);
     }
 
     animateCircles();
 });
 
-// Theme toggle functionality
-const themeToggle = document.getElementById('themeToggle');
-const body = document.body;
-
-// Check for saved theme preference or default to light mode
-const currentTheme = localStorage.getItem('theme') || 'light';
-if (currentTheme === 'dark') {
-    body.classList.add('theme-dark');
-    themeToggle.textContent = '🌙';
-} else {
-    themeToggle.textContent = '☀️';
-}
-
-themeToggle.addEventListener('click', () => {
-    body.classList.toggle('theme-dark');
-    const isDark = body.classList.contains('theme-dark');
-    themeToggle.textContent = isDark ? '🌙' : '☀️';
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
-});
-
-// Character counters
+// ── Character Counters 
 function setupCharCounter(textareaId, counterId, countId, maxLength) {
     const textarea = document.getElementById(textareaId);
     const counter = document.getElementById(counterId);
     const count = document.getElementById(countId);
+    if (!textarea || !counter || !count) return;
 
-    textarea.addEventListener('input', () => {
-        const currentLength = textarea.value.length;
-        count.textContent = currentLength;
-        if (currentLength > maxLength * 0.9) {
-            counter.style.color = 'var(--error)';
-        } else {
-            counter.style.color = 'var(--text-muted)';
-        }
+    textarea.addEventListener("input", () => {
+        const len = textarea.value.length;
+        count.textContent = len;
+        counter.style.color = len > maxLength * 0.9 ? "var(--error)" : "var(--text-muted)";
     });
 }
 
-setupCharCounter('bugDescription', 'descCharCounter', 'descCharCount', 1000);
-setupCharCounter('stepsToReproduce', 'stepsCharCounter', 'stepsCharCount', 500);
-
-// File upload handling
-const fileInput = document.getElementById('screenshots');
-const fileList = document.getElementById('fileList');
-
-fileInput.addEventListener('change', (e) => {
-    const files = Array.from(e.target.files);
-    fileList.innerHTML = '';
-
-    if (files.length > 0) {
-        const fileNames = files.map(file => `<div>• ${file.name} (${(file.size / 1024).toFixed(1)} KB)</div>`);
-        fileList.innerHTML = '<strong>Selected files:</strong><br>' + fileNames.join('');
-    }
+document.addEventListener("DOMContentLoaded", function () {
+    setupCharCounter("bugDescription", "descCharCounter", "descCharCount", 1000);
+    setupCharCounter("stepsToReproduce", "stepsCharCounter", "stepsCharCount", 500);
 });
 
-// Form submission
+// ── File Upload 
+document.addEventListener("DOMContentLoaded", function () {
+    const fileInput = document.getElementById("screenshots");
+    const fileList = document.getElementById("fileList");
+    if (!fileInput || !fileList) return;
+
+    fileInput.addEventListener("change", (e) => {
+        const files = Array.from(e.target.files);
+        fileList.innerHTML = files.length
+            ? "<strong>Selected files:</strong><br>" + files.map(f => `<div>• ${f.name} (${(f.size / 1024).toFixed(1)} KB)</div>`).join("")
+            : "";
+    });
+});
+
+// ── Form Submission 
 async function submitBugReport(event) {
     event.preventDefault();
 
-    const submitBtn = document.getElementById('submitBtn');
+    const submitBtn = document.getElementById("submitBtn");
     const originalText = submitBtn.innerHTML;
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
 
     try {
-        // Collect form data
-        const formData = new FormData();
-        formData.append('userName', document.getElementById('userName').value);
-        formData.append('userEmail', document.getElementById('userEmail').value);
-        formData.append('bugTitle', document.getElementById('bugTitle').value);
-        formData.append('bugCategory', document.getElementById('bugCategory').value);
-        formData.append('browser', document.getElementById('browser').value);
-        formData.append('os', document.getElementById('os').value);
-        formData.append('bugDescription', document.getElementById('bugDescription').value);
-        formData.append('stepsToReproduce', document.getElementById('stepsToReproduce').value);
+        await new Promise(resolve => setTimeout(resolve, 2000));
 
-        // Add screenshots
-        const screenshots = document.getElementById('screenshots').files;
-        for (let i = 0; i < screenshots.length; i++) {
-            formData.append('screenshots', screenshots[i]);
-        }
+        const successMessage = document.getElementById("successMessage");
+        successMessage.classList.add("show");
+        document.getElementById("bugReportForm").reset();
+        document.getElementById("fileList").innerHTML = "";
 
-        // For demo purposes, we'll simulate a successful submission
-        // In a real implementation, you would send this to a backend API
-        await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate network delay
-
-        // Show success message
-        const successMessage = document.getElementById('successMessage');
-        successMessage.classList.add('show');
-
-        // Reset form
-        document.getElementById('bugReportForm').reset();
-        fileList.innerHTML = '';
-
-        // Hide success message after 5 seconds
-        setTimeout(() => {
-            successMessage.classList.remove('show');
-        }, 5000);
-
+        setTimeout(() => successMessage.classList.remove("show"), 5000);
     } catch (error) {
-        console.error('Error submitting bug report:', error);
-
-        // Show error message
-        const errorMessage = document.getElementById('errorMessage');
-        errorMessage.classList.add('show');
-
-        // Hide error message after 5 seconds
-        setTimeout(() => {
-            errorMessage.classList.remove('show');
-        }, 5000);
+        const errorMessage = document.getElementById("errorMessage");
+        errorMessage.classList.add("show");
+        setTimeout(() => errorMessage.classList.remove("show"), 5000);
     } finally {
         submitBtn.disabled = false;
         submitBtn.innerHTML = originalText;
     }
 }
 
-// Auto-detect browser and OS
-function detectBrowserAndOS() {
-    const userAgent = navigator.userAgent;
+// ── Auto-detect Browser & OS 
+document.addEventListener("DOMContentLoaded", function () {
+    const ua = navigator.userAgent;
 
-    // Detect browser
-    let browser = '';
-    if (userAgent.includes('Chrome') && !userAgent.includes('Edg')) {
-        browser = 'chrome';
-    } else if (userAgent.includes('Firefox')) {
-        browser = 'firefox';
-    } else if (userAgent.includes('Safari') && !userAgent.includes('Chrome')) {
-        browser = 'safari';
-    } else if (userAgent.includes('Edg')) {
-        browser = 'edge';
-    } else if (userAgent.includes('Opera')) {
-        browser = 'opera';
-    }
+    let browser = "";
+    if (ua.includes("Edg")) browser = "edge";
+    else if (ua.includes("Chrome")) browser = "chrome";
+    else if (ua.includes("Firefox")) browser = "firefox";
+    else if (ua.includes("Safari")) browser = "safari";
+    else if (ua.includes("Opera")) browser = "opera";
 
-    // Detect OS
-    let os = '';
-    if (userAgent.includes('Windows')) {
-        os = 'windows';
-    } else if (userAgent.includes('Mac')) {
-        os = 'macos';
-    } else if (userAgent.includes('Linux')) {
-        os = 'linux';
-    } else if (userAgent.includes('Android')) {
-        os = 'android';
-    } else if (userAgent.includes('iPhone') || userAgent.includes('iPad')) {
-        os = 'ios';
-    }
+    let os = "";
+    if (ua.includes("Android")) os = "android";
+    else if (ua.includes("iPhone") || ua.includes("iPad")) os = "ios";
+    else if (ua.includes("Windows")) os = "windows";
+    else if (ua.includes("Mac")) os = "macos";
+    else if (ua.includes("Linux")) os = "linux";
 
-    // Pre-select detected values
-    if (browser) {
-        document.getElementById('browser').value = browser;
-    }
-    if (os) {
-        document.getElementById('os').value = os;
-    }
-}
-
-// Initialize
-document.addEventListener('DOMContentLoaded', () => {
-    detectBrowserAndOS();
-});
-
-
-document.addEventListener("navbarLoaded", () => {
-    const themeToggle = document.getElementById("themeToggle");
-    const body = document.body;
-
-    if (!themeToggle) return;
-
-    function setTheme(theme) {
-        body.setAttribute("data-theme", theme);
-        localStorage.setItem("theme", theme);
-        themeToggle.textContent = theme === "dark" ? "🌙" : "☀️";
-    }
-
-    function toggleTheme() {
-        const currentTheme = body.getAttribute("data-theme") || "dark";
-        setTheme(currentTheme === "dark" ? "light" : "dark");
-    }
-
-    setTheme(localStorage.getItem("theme") || "dark");
-    themeToggle.addEventListener("click", toggleTheme);
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-    loadProjects();
+    const browserEl = document.getElementById("browser");
+    const osEl = document.getElementById("os");
+    if (browser && browserEl) browserEl.value = browser;
+    if (os && osEl) osEl.value = os;
 });
