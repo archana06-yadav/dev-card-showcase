@@ -1,7 +1,7 @@
 // Review/rating logic
 const reviewForm = document.getElementById('reviewForm');
 const reviewList = document.getElementById('reviewList');
-
+//done odne 
 reviewForm.addEventListener('submit', function(e) {
     e.preventDefault();
     const partner = reviewForm.partner.value;
