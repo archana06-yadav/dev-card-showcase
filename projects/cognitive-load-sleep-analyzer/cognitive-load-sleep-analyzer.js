@@ -291,3 +291,22 @@ document.addEventListener('DOMContentLoaded', function() {
     updateChart();
     updateEntriesList();
 });
+
+function resetForm() {
+    document.getElementById('logDate').value = '';
+    document.getElementById('workHours').value = '';
+    document.getElementById('cognitiveLoad').value = 5;
+    document.getElementById('sleepHours').value = '';
+    document.getElementById('sleepQuality').value = 7;
+    document.getElementById('workNotes').value = '';
+    document.getElementById('sleepNotes').value = '';
+    
+    updateLoadValue();
+    updateQualityValue();
+    
+    const resetBtn = document.querySelector('.reset-btn');
+    resetBtn.style.backgroundColor = '#28a745';
+    setTimeout(() => {
+        resetBtn.style.backgroundColor = '#6c757d';
+    }, 200);
+}
